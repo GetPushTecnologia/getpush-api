@@ -1,13 +1,19 @@
+using GetPush_Api.Shared;
 using Serilog;
+using System.Configuration;
 using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Read configuration from appsettings.json
+var configuration = builder.Configuration;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .WriteTo.Debug()
     .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
     .CreateLogger();
+
 
 // Add services to the container.
 builder.Host.UseSerilog();
@@ -59,4 +65,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+Runtime.ConnectionString = configuration.GetConnectionString("CnnStr") ?? throw new InvalidOperationException("Connection string 'CnnStrAct' not found."); ;
+
 app.Run();
+
+
