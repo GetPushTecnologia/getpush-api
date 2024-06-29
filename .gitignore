@@ -1,0 +1,97 @@
+
+.vs/GetPush-Api/FileContentIndex/07633748-a160-4ad1-a1f7-06c97f32688b.vsidx
+.vs/GetPush-Api/FileContentIndex/0c9cb9b5-3b03-4dda-add3-8c166e4c27f6.vsidx
+*.vsidx
+*.vsidx
+.vs/GetPush-Api/FileContentIndex/2462c7da-024a-48f4-9d07-a500c44ba567.vsidx
+.vs/GetPush-Api/FileContentIndex/d47ae3e4-39c5-4a91-8ef0-0199d7d44b4a.vsidx
+*.vsidx
+.vs/GetPush-Api/FileContentIndex/2462c7da-024a-48f4-9d07-a500c44ba567.vsidx
+.vs/GetPush-Api/FileContentIndex/2462c7da-024a-48f4-9d07-a500c44ba567.vsidx
+.vs/GetPush-Api/FileContentIndex/2462c7da-024a-48f4-9d07-a500c44ba567.vsidx
+.vs/GetPush-Api/FileContentIndex/2462c7da-024a-48f4-9d07-a500c44ba567.vsidx
+.vs/GetPush-Api/v16/.suo
+.vs/GetPush-Api/v17/.futdcache.v1
+.vs/GetPush-Api/v17/.futdcache.v2
+.vs/GetPush-Api/DesignTimeBuild/.dtbcache.v2
+.vs/GetPush-Api/DesignTimeBuild/.dtbcache.v2
+GetPush-Api.Domain/obj/project.assets.json
+GetPush-Api.Domain/obj/project.nuget.cache
+/.vs/ProjectEvaluation
+.vs/ProjectEvaluation/GetPush-Api.metadata.v7.bin
+/.vs/ProjectEvaluation
+/.vs
+.vs/GetPush-Api/v17/.suo
+.vs/ProjectEvaluation/GetPush-Api.metadata.v7.bin
+.vs/ProjectEvaluation/GetPush-Api.metadata.v7.bin
+.vs/ProjectEvaluation/GetPush-Api.projects.v7.bin
+.vs/GetPush-Api/config/applicationhost.config
+.vs/GetPush-Api/DesignTimeBuild/.dtbcache.v2
+.vs/GetPush-Api/FileContentIndex/2462c7da-024a-48f4-9d07-a500c44ba567.vsidx
+.vs/GetPush-Api/FileContentIndex/8b48f347-bcca-4d24-b653-51aa593ed420.vsidx
+.vs/GetPush-Api/FileContentIndex/9c6fb4a5-fec7-42a3-9905-79e330fb4631.vsidx
+.vs/GetPush-Api/FileContentIndex/d47ae3e4-39c5-4a91-8ef0-0199d7d44b4a.vsidx
+.vs/GetPush-Api/FileContentIndex/ed89fc0f-4840-4eb1-b32b-291bd1b87a06.vsidx
+.vs/GetPush-Api/v17/.futdcache.v2
+.vs/ProjectEvaluation/GetPush-Api.metadata.v7.bin
+.vs/ProjectEvaluation/GetPush-Api.projects.v7.bin
+.vs/GetPush-Api/v17/.futdcache.v2
+.vs/GetPush-Api/v17/.suo
+GetPush-Api/logs/log-20240624.txt
+
+# Ignore os arquivos e diretórios do Visual Studio
+.vs/
+*.vsidx
+
+# Ignore os arquivos de build
+bin/
+obj/
+
+# Ignore as configurações do usuário do Visual Studio
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ignore os arquivos do NuGet
+*.nupkg
+*.snupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Ignore as pastas de log
+logs/
+*.log
+
+# Ignore as configurações locais, temporárias e caches
+.idea/
+.vscode/
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
+.vscode/extensions.json
+*.csproj.user
+*.rsuser
+*.sln.docstates
+.vsconfig
+.vscode/
+
+# Ignore os arquivos de teste
+TestResults/
+*.vsix
+
+# Ignore os arquivos temporários
+*.tmp
+*.temp
+
+# Ignore as pastas de publicações
+publish/
+out/
+
+# Ignore as pastas do Rider
+.idea/
+
+# Ignore os diretórios de build do .NET
+artifacts/
