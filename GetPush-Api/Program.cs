@@ -1,6 +1,8 @@
+using GetPush_Api.Domain.Commands.Handlers;
+using GetPush_Api.Domain.Repositories;
+using GetPush_Api.Infra.Repositories;
 using GetPush_Api.Shared;
 using Serilog;
-using System.Configuration;
 using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,16 +10,21 @@ var builder = WebApplication.CreateBuilder(args);
 // Read configuration from appsettings.json
 var configuration = builder.Configuration;
 
+// Configure services
+builder.Services.AddTransient<AccountCommandHandler>();
+builder.Services.AddTransient<IAccountRepository, AccountRepository>();
+
+// Configure Serilog
 Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(configuration)
     .WriteTo.Console()
     .WriteTo.Debug()
     .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
-
-// Add services to the container.
 builder.Host.UseSerilog();
 
+// Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -42,6 +49,10 @@ else
     app.UseHsts();
 }
 
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
 app.Use(async (context, next) =>
 {
     try
@@ -59,14 +70,10 @@ app.Use(async (context, next) =>
     }
 });
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
 app.MapControllers();
 
-Runtime.ConnectionString = configuration.GetConnectionString("CnnStr") ?? throw new InvalidOperationException("Connection string 'CnnStrAct' not found."); ;
+// Set the connection string
+Runtime.ConnectionString = configuration.GetConnectionString("CnnStr")
+                           ?? throw new InvalidOperationException("Connection string 'CnnStr' not found.");
 
 app.Run();
-
-

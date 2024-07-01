@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GetPush-Api.Shared\GetPush-api.Shared.csproj" />
-    <ProjectReference Include="..\ProjetoApi-CRM.Shared\GetPush-api.Shared.csproj" />
   </ItemGroup>
 
 </Project>
