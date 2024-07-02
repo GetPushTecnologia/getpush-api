@@ -17,12 +17,12 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace GetPush_Api.Controllers
 {
-    public class AccountController : BaseController
+    public class AccountController : ControllerBase
     {
         private readonly AccountCommandHandler _handler;
-        public AccountController(IUow uow, ILogService logService, AccountCommandHandler handler) : base(uow, logService)
+        public AccountController(AccountCommandHandler handler) 
         {
-            _handler = handler;
+            _handler = handler;            
         }
 
         [HttpPost]
@@ -36,8 +36,9 @@ namespace GetPush_Api.Controllers
                     return await Response(null, new List<Notification> { new Notification("Usuario", "Usuário ou senha inválidos") });
 
                 var identity = await GetClaims(command);
+
                 if (identity == null)
-                    return await Response(null, new List<Notification> { new Notification("User", "Usuário ou senha inválidos") });
+                    return await Response(null, new List<Notification> { new Notification("Usuario", "Usuário ou senha inválidos") });
 
                 //var claims = new List<Claim>()
                 //{
@@ -78,29 +79,32 @@ namespace GetPush_Api.Controllers
 
                 //var json = JsonConvert.SerializeOsbject(response, _serializerSettings);
                 //return new OkObjectResult(json);
-                
+
                 return null;
             }
             catch(Exception ex)
             {
-
+                return StatusCode(500, new
+                {
+                    Message = "Erro",
+                    Error = ex.Message
+                });
             }
-            return null;
         }
 
-        private Task<ClaimsIdentity> GetClaims(AuthenticateUserCommand command)
+        private async Task<ClaimsIdentity> GetClaims(AuthenticateUserCommand command)
         {
             //var employee = _repository.GetByUsername(command.Email);
-            var usuarioLogin = _handler.GetUsuarioLogin(command.Email);
+            var usuarioLogin = await _handler.GetUsuarioLogin(command.login);
 
-            //if (employee == null)
-            //    return Task.FromResult<ClaimsIdentity>(null);
+            if (usuarioLogin == null)
+                return await Task.FromResult<ClaimsIdentity>(null);
 
-            //if (!employee.User.Authenticate(command.Email, command.Password))
-            //{
-            //    if (employee.User.Password != command.Password)
-            //        return Task.FromResult<ClaimsIdentity>(null);
-            //}
+            if (!usuarioLogin.Authenticate(command.login, command.password))
+            {
+                if (usuarioLogin.password != command.password)
+                    return await Task.FromResult<ClaimsIdentity>(null);
+            }
 
             //_employee = employee;
 
@@ -131,6 +135,24 @@ namespace GetPush_Api.Controllers
             //        new GenericIdentity(employee.User.Username, "Token"), claims));
 
             return null;
+        }
+
+        private async Task<IActionResult> Response(object result, List<Notification> notifications)
+        {
+            if (notifications == null || notifications.Count == 0)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    data = result
+                });
+            }
+
+            return BadRequest(new
+            {
+                success = false,
+                errors = notifications.Select(n => new { n.Property, n.Message })
+            });
         }
     }
 }

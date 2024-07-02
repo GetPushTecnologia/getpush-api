@@ -4,7 +4,7 @@ namespace GetPush_Api.Domain.Commands.Inputs
 {
     public class AuthenticateUserCommand : ICommand
     {
-        public string Email { get; set; }
-        public string Senha { get; set; }
+        public string login { get; set; }
+        public string password { get; set; }
     }
 }

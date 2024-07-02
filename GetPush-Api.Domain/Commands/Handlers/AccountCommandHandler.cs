@@ -12,9 +12,9 @@ namespace GetPush_Api.Domain.Commands.Handlers
             _repository = repository;
         }
 
-        public Task<UsuarioLoginResult> GetUsuarioLogin(string email)
+        public async Task<UsuarioLoginResult> GetUsuarioLogin(string email)
         {
-            return _repository.GetUsuarioLogin(email);
+            return await _repository.GetUsuarioLogin(email);
         }
     }
 }

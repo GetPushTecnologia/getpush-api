@@ -1,4 +1,5 @@
 using GetPush_Api.Domain.Commands.Handlers;
+using GetPush_Api.Domain.Commands.Results.map;
 using GetPush_Api.Domain.Repositories;
 using GetPush_Api.Infra.Repositories;
 using GetPush_Api.Shared;
@@ -11,8 +12,14 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 // Configure services
+//CommandHandler
 builder.Services.AddTransient<AccountCommandHandler>();
+
+//Repository
 builder.Services.AddTransient<IAccountRepository, AccountRepository>();
+
+//Map
+builder.Services.AddTransient<UsuarioMap, UsuarioMap>();
 
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
