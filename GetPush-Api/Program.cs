@@ -82,5 +82,7 @@ app.MapControllers();
 // Set the connection string
 Runtime.ConnectionString = configuration.GetConnectionString("CnnStr")
                            ?? throw new InvalidOperationException("Connection string 'CnnStr' not found.");
+Runtime.ClientManagers = configuration.GetConnectionString("ClientManagers")
+                           ?? throw new InvalidOperationException("Connection string 'CnnStr' not found.");
 
 app.Run();

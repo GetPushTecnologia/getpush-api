@@ -2,6 +2,7 @@
 {
     public static class Runtime
     {
-        public static string ConnectionString = "";
+        public static string ConnectionString = string.Empty;
+        public static string ClientManagers = string.Empty;
     }
 }

@@ -40,17 +40,18 @@ namespace GetPush_Api.Controllers
                 if (identity == null)
                     return await Response(null, new List<Notification> { new Notification("Usuario", "Usuário ou senha inválidos") });
 
-                //var claims = new List<Claim>()
-                //{
-                //    new Claim("name", _employee.Name.ToString()),
-                //    new Claim("employee", _employee.Id.ToString()),
-                //    new Claim(JwtRegisteredClaimNames.UniqueName, command.Email),
-                //    new Claim(JwtRegisteredClaimNames.NameId, command.Email),
-                //    new Claim(JwtRegisteredClaimNames.Email, command.Email),
-                //    new Claim(JwtRegisteredClaimNames.Sub, command.Email),
-                //    new Claim(JwtRegisteredClaimNames.Jti, await _tokenOptions.JtiGenerator()),
-                //    new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(_tokenOptions.IssuedAt).ToString(), ClaimValueTypes.Integer64),
-                //};
+                var claims = new List<Claim>()
+                {
+                    //new Claim("nome", _employee.Name.ToString()),
+                    //new Claim("employee", _employee.Id.ToString()),
+                    //new Claim(JwtRegisteredClaimNames.UniqueName, command.Email),
+                    //new Claim(JwtRegisteredClaimNames.NameId, command.Email),
+                    //new Claim(JwtRegisteredClaimNames.Email, command.Email),
+                    //new Claim(JwtRegisteredClaimNames.Sub, command.Email),
+                    //new Claim(JwtRegisteredClaimNames.Jti, await _tokenOptions.JtiGenerator()),
+                    //new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(_tokenOptions.IssuedAt).ToString(), ClaimValueTypes.Integer64),
+                };
+
                 //claims.AddRange(identity.Claims);
                 //var jwt = new JwtSecurityToken(
                 //    issuer: _tokenOptions.Issuer,
@@ -108,9 +109,9 @@ namespace GetPush_Api.Controllers
 
             //_employee = employee;
 
-            //var clientManagers = Runtime.ClientManagers.ToLower().Split(',');
+            var clientManagers = Runtime.ClientManagers.ToLower().Split(',');
 
-            //var claims = new List<Claim>();
+            var claims = new List<Claim>();
 
             //if (employee.Type == Domain.Enums.EEmployeeType.Administrator ||
             //    employee.Type == Domain.Enums.EEmployeeType.Common ||
@@ -127,14 +128,12 @@ namespace GetPush_Api.Controllers
             //    claims.Add(new Claim("GestaoRenoJuridico", Enum.GetName(typeof(Domain.Enums.EEmployeeType), employee.Type)));
             //}
 
-            //if (clientManagers.Contains(employee.User.Username))
+            //if (clientManagers.Contains(usuarioLogin.login))
             //    claims.Add(new Claim("ClientManager", Enum.GetName(typeof(Domain.Enums.EEmployeeType), employee.Type)));
 
-            //return Task.FromResult(
-            //    new ClaimsIdentity(
-            //        new GenericIdentity(employee.User.Username, "Token"), claims));
-
-            return null;
+            return await Task.FromResult(
+                new ClaimsIdentity(
+                    new GenericIdentity(usuarioLogin.usuario.nome, "Token"), claims));
         }
 
         private async Task<IActionResult> Response(object result, List<Notification> notifications)
