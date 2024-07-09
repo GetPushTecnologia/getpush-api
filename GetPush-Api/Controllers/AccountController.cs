@@ -2,27 +2,27 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using GetPush_Api.Domain.Commands.Inputs;
-using GetPush_Api.Domain.Services;
-using GetPush_Api.Infra;
 using System.Security.Claims;
-using System.Security.Policy;
-using Microsoft.AspNetCore.Identity;
-using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using GetPush_Api.Shared;
 using System.Security.Principal;
 using GetPush_Api.Domain.Commands.Handlers;
-using System.Reflection.Metadata;
-using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.IdentityModel.Tokens;
+using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Cryptography;
+using System.Text;
+
 
 namespace GetPush_Api.Controllers
 {
     public class AccountController : ControllerBase
     {
         private readonly AccountCommandHandler _handler;
-        public AccountController(AccountCommandHandler handler) 
+        public AccountController(AccountCommandHandler handler)
         {
-            _handler = handler;            
+            _handler = handler;
         }
 
         [HttpPost]
@@ -30,6 +30,8 @@ namespace GetPush_Api.Controllers
         [Route("v1/auth/sing-in")]
         public async Task<IActionResult> SingIn([FromBody] AuthenticateUserCommand command)
         {
+            var _tokenOptions = new TokenOptions();
+            
             try
             {
                 if (command == null)
@@ -40,57 +42,76 @@ namespace GetPush_Api.Controllers
                 if (identity == null)
                     return await Response(null, new List<Notification> { new Notification("Usuario", "Usuário ou senha inválidos") });
 
-                var claims = new List<Claim>()
+                var claims = new List<Claim>
                 {
-                    //new Claim("nome", _employee.Name.ToString()),
-                    //new Claim("employee", _employee.Id.ToString()),
-                    //new Claim(JwtRegisteredClaimNames.UniqueName, command.Email),
-                    //new Claim(JwtRegisteredClaimNames.NameId, command.Email),
-                    //new Claim(JwtRegisteredClaimNames.Email, command.Email),
-                    //new Claim(JwtRegisteredClaimNames.Sub, command.Email),
-                    //new Claim(JwtRegisteredClaimNames.Jti, await _tokenOptions.JtiGenerator()),
-                    //new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(_tokenOptions.IssuedAt).ToString(), ClaimValueTypes.Integer64),
+                    new Claim("nome", "Teste"),
+                    new Claim(JwtRegisteredClaimNames.Jti, await _tokenOptions.JtiGenerator()),
+                    new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(_tokenOptions.IssuedAt).ToString(), ClaimValueTypes.Integer64),
                 };
 
-                //claims.AddRange(identity.Claims);
-                //var jwt = new JwtSecurityToken(
-                //    issuer: _tokenOptions.Issuer,
-                //audience: _tokenOptions.Audience,
-                //claims: claims.AsEnumerable(),
-                //    notBefore: _tokenOptions.NotBefore,
-                //    expires: _tokenOptions.Expiration,
-                //    signingCredentials: _tokenOptions.SigningCredentials);
+                var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Runtime.KeySecurityToken));
+         
+                // Configurar as credenciais do token
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-                //var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+                // Configurar o token JWT com as claims e outros parâmetros necessários
+                var token = new JwtSecurityToken(
+                    issuer: "seu-issuer",
+                    audience: "seu-audience",
+                    claims: claims,
+                    expires: DateTime.Now.AddDays(1),
+                    signingCredentials: creds
+                );
 
-                //var response = new
-                //{
-                //    token = encodedJwt,
-                //    expires = (int)_tokenOptions.ValidFor.TotalSeconds,
-                //    user = new
-                //    {
-                //        id = _employee.Id,
-                //        name = _employee.Name.ToString(),
-                //        email = _employee.Email.Address,
-                //        username = _employee.User.Username,
-                //        teste = "teste",
-                //        requestPassword = _employee.User.requestPassword
-                //    }s
-                //};
-
-                //var json = JsonConvert.SerializeOsbject(response, _serializerSettings);
-                //return new OkObjectResult(json);
-
-                return null;
-            }
-            catch(Exception ex)
-            {
-                return StatusCode(500, new
+                // Adicionar cookie de autenticação
+                var authProperties = new AuthenticationProperties
                 {
-                    Message = "Erro",
-                    Error = ex.Message
+                    IsPersistent = true, // Pode ser configurado conforme necessidade
+                    ExpiresUtc = DateTime.UtcNow.AddDays(1) // Tempo de expiração do cookie
+                };
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity), authProperties);
+
+                return Ok(new
+                {
+                    token = "Bearer " + new JwtSecurityTokenHandler().WriteToken(token)
                 });
             }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Erro", Error = ex.Message });
+            }
+        }
+
+        public class TokenOptions
+        {
+            public string Jti { get; set; }
+
+            // Método exemplo para JtiGenerator
+            public async Task<string> JtiGenerator()
+            {
+                // Implemente a lógica para gerar o Jti aqui
+                return await Task.FromResult(Guid.NewGuid().ToString());
+            }
+
+            public DateTime IssuedAt { get; set; }
+        }
+
+        private byte[] GenerateRandomKey(int size)
+        {
+            var key = new byte[size];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(key);
+            }
+            return key;
+        }
+
+        private static long ToUnixEpochDate(DateTime date)
+        {
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            var timeSpan = date.ToUniversalTime() - epoch;
+            return (long)timeSpan.TotalSeconds;
         }
 
         private async Task<ClaimsIdentity> GetClaims(AuthenticateUserCommand command)
@@ -106,30 +127,15 @@ namespace GetPush_Api.Controllers
                 if (usuarioLogin.password != command.password)
                     return await Task.FromResult<ClaimsIdentity>(null);
             }
-
-            //_employee = employee;
-
+          
             var clientManagers = Runtime.ClientManagers.ToLower().Split(',');
 
-            var claims = new List<Claim>();
-
-            //if (employee.Type == Domain.Enums.EEmployeeType.Administrator ||
-            //    employee.Type == Domain.Enums.EEmployeeType.Common ||
-            //    employee.Type == Domain.Enums.EEmployeeType.Stockbroker ||
-            //    employee.Type == Domain.Enums.EEmployeeType.MasterCapital)
-            //{
-            //    claims.Add(new Claim("GestaoReno", Enum.GetName(typeof(Domain.Enums.EEmployeeType), employee.Type)));
-            //}
-
-            //if (employee.Type == Domain.Enums.EEmployeeType.Administrator ||
-            //    employee.Type == Domain.Enums.EEmployeeType.MasterProperties ||
-            //    employee.Type == Domain.Enums.EEmployeeType.MasterCapital)
-            //{
-            //    claims.Add(new Claim("GestaoRenoJuridico", Enum.GetName(typeof(Domain.Enums.EEmployeeType), employee.Type)));
-            //}
-
-            //if (clientManagers.Contains(usuarioLogin.login))
-            //    claims.Add(new Claim("ClientManager", Enum.GetName(typeof(Domain.Enums.EEmployeeType), employee.Type)));
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, usuarioLogin.login),
+                new Claim(ClaimTypes.Name, usuarioLogin.usuario.nome),
+                new Claim(ClaimTypes.Email, usuarioLogin.usuario.email)
+            };
 
             return await Task.FromResult(
                 new ClaimsIdentity(
