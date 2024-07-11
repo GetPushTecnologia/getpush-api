@@ -13,12 +13,14 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Cryptography;
 using System.Text;
+using GetPush_Api.Domain.Commands.Results;
 
 
 namespace GetPush_Api.Controllers
 {
     public class AccountController : ControllerBase
     {
+        private UsuarioLoginResult _usuarioResult = new UsuarioLoginResult();
         private readonly AccountCommandHandler _handler;
         public AccountController(AccountCommandHandler handler)
         {
@@ -44,7 +46,8 @@ namespace GetPush_Api.Controllers
 
                 var claims = new List<Claim>
                 {
-                    new Claim("nome", "Teste"),
+                    new Claim("nome", _usuarioResult.usuario.nome),
+                    new Claim("usuarioId", _usuarioResult.usuario.id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Jti, await _tokenOptions.JtiGenerator()),
                     new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(_tokenOptions.IssuedAt).ToString(), ClaimValueTypes.Integer64),
                 };
@@ -97,16 +100,6 @@ namespace GetPush_Api.Controllers
             public DateTime IssuedAt { get; set; }
         }
 
-        private byte[] GenerateRandomKey(int size)
-        {
-            var key = new byte[size];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(key);
-            }
-            return key;
-        }
-
         private static long ToUnixEpochDate(DateTime date)
         {
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -118,9 +111,11 @@ namespace GetPush_Api.Controllers
         {
             //var employee = _repository.GetByUsername(command.Email);
             var usuarioLogin = await _handler.GetUsuarioLogin(command.login);
-
+            
             if (usuarioLogin == null)
                 return await Task.FromResult<ClaimsIdentity>(null);
+
+            _usuarioResult = usuarioLogin;
 
             if (!usuarioLogin.Authenticate(command.login, command.password))
             {

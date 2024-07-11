@@ -1,4 +1,5 @@
 ﻿using GetPush_Api.Domain.Commands.Handlers;
+using GetPush_Api.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +15,12 @@ namespace GetPush_Api.Controllers
             _handler = handler;
         }
 
+        private Guid UsuarioId()
+        {
+            var userIdString = this.User.FindFirst("usuarioId")?.Value ?? throw new InvalidOperationException("O usuário não possui um ID válido.");
+            return new Guid(userIdString);            
+        }
+
         [HttpGet]
         [Route("getContasPagas")]
         [Authorize]
@@ -21,9 +28,54 @@ namespace GetPush_Api.Controllers
         {
             try
             {
-                return Ok(_handler.GetContasPagas());
+                return Ok(await _handler.GetContasPagas(new Usuario { id = UsuarioId() }));
             }
-            catch(Exception ex)
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Erro", Error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("insertContasPagas")]
+        [Authorize]
+        public async Task<IActionResult> InsertContasPagas()
+        {
+            try
+            {
+                return Ok(await _handler.InsertContasPagas(new Usuario { id = UsuarioId() }));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Erro", Error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("updateContasPagas")]
+        [Authorize]
+        public async Task<IActionResult> UpdateContasPagas()
+        {
+            try
+            {
+                return Ok(await _handler.UpdateContasPagas(new Usuario { id = UsuarioId() }));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Erro", Error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("deleteContasPagas")]
+        [Authorize]
+        public async Task<IActionResult> DeleteContasPagas()
+        {
+            try
+            {
+                return Ok(await _handler.DeleteContasPagas(new Usuario { id = UsuarioId() }));
+            }
+            catch (Exception ex)
             {
                 return StatusCode(500, new { Message = "Erro", Error = ex.Message });
             }

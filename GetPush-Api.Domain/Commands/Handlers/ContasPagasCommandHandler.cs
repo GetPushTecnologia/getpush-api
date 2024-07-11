@@ -1,4 +1,5 @@
 ﻿using GetPush_Api.Domain.Commands.Results;
+using GetPush_Api.Domain.Entities;
 using GetPush_Api.Domain.Repositories;
 
 namespace GetPush_Api.Domain.Commands.Handlers
@@ -11,9 +12,24 @@ namespace GetPush_Api.Domain.Commands.Handlers
             _repository = repository;
         }
 
-        public async Task<IEnumerable<ContasPagarResult>> GetContasPagas()
+        public async Task DeleteContasPagas(Usuario usuario)
         {
-            return await _repository.GetContasPagas();
+            await _repository.DeleteContasPagas(usuario);
+        }
+
+        public async Task<IEnumerable<ContasPagarResult>> GetContasPagas(Usuario usuario)
+        {
+            return await _repository.GetContasPagas(usuario);
+        }
+
+        public async Task InsertContasPagas(Usuario usuario)
+        {
+            await _repository.DeleteContasPagas(usuario);
+        }
+
+        public async Task UpdateContasPagas(Usuario usuario)
+        {
+            await _repository.DeleteContasPagas(usuario);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using GetPush_Api.Domain.Commands.Results;
+using GetPush_Api.Domain.Entities;
 using GetPush_Api.Domain.Repositories;
 using GetPush_Api.Shared;
 using System.Data.SqlClient;
@@ -8,46 +9,66 @@ namespace GetPush_Api.Infra.Repositories
 {
     public class ContasPagasRepository : IContasPagasRepository
     {
-        public async Task<IEnumerable<ContasPagarResult>> GetContasPagas()
+        public Task DeleteContasPagas(Usuario usuario)
         {
-            var query = @"select ul.id as ul_id,
-								 ul.login as ul_login,
-								 ul.password ul_password,
-								 ul.data_cadastro as ul_data_cadastro,
-								 ul.data_alterado as ul_data_alterado,
-								 ul.usuario_id_cadastro as ul_usuario_id_cadastro,
-								 u.id as u_id,
-								 u.nome as u_nome,
-								 u.cpf as u_cpf,
-								 u.email as u_email,
-								 u.nascimento as u_nascimento,
-								 u.sexo as u_sexo,
-								 u.ativo as u_ativo,
-								 u.data_cadastro as u_data_cadastro,
-								 u.data_alterado u_data_alterado,
-								 u.usuario_id_cadastro as u_usuario_id_cadastro
-						    from usuario u with(nolock)
-						   inner join usuarioLogin ul with(nolock) on ul.usuario_id = u.id
-                           where email = @email";
+            throw new NotImplementedException();
+        }
 
-			using (var conn = new SqlConnection(Runtime.ConnectionString))
-			{
-				await conn.OpenAsync();
-				var result = await conn.QueryAsync(query);
+        public async Task<IEnumerable<ContasPagarResult>> GetContasPagas(Usuario usuario)
+        {
+            var query = @"select id,
+							     descricao,
+							     tipoContasPagar_code,
+							     data_pagamento,
+							     valor,
+							     usuario_id,
+							     data_cadastro,
+							     data_alterado,
+							     usuario_id_cadastro
+						    from contasPagas
+                           where usuario_id = @Usuario_id";
 
-				var contasPagarList = new List<ContasPagarResult>();
+            using (var conn = new SqlConnection(Runtime.ConnectionString))
+            {
+                await conn.OpenAsync();
+                var result = await conn.QueryAsync(query, new { Usuario_id = usuario.id });
 
-				if (result != null)
-				{
-					contasPagarList.Add(new ContasPagarResult
-					{
+                var contasPagarList = new List<ContasPagarResult>();
 
-					});
+                if (result != null)
+                {
+                    foreach (var item in result)
+                    {
+                        contasPagarList.Add(new ContasPagarResult
+                        {
+                            id = item.id,
+                            descricao = item.descricao,
+                            tipoContasPagar = new TipoContasPagar { code = item.tipoContasPagar_code },
+                            data_pagamento = item.data_pagamento,
+                            valor = item.valor,
+                            usuario = new UsuarioResult { id = item.usuario_id },
+                            data_cadastro = item.data_cadastro,
+                            data_alterado = item.data_alterado,
+                            usuarioCadastro = new UsuarioResult { id = item.usuario_id_cadastro }
+                        });
+                    }
+
+                    return contasPagarList;
                 }
 
-				return new List<ContasPagarResult>();
+                return new List<ContasPagarResult>();
 
             }
+        }
+
+        public Task InsertContasPagas(Usuario usuario)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateContasPagas(Usuario usuario)
+        {
+            throw new NotImplementedException();
         }
     }
 }

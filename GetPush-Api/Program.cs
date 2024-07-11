@@ -3,9 +3,9 @@ using GetPush_Api.Domain.Commands.Results.map;
 using GetPush_Api.Domain.Repositories;
 using GetPush_Api.Infra.Repositories;
 using GetPush_Api.Shared;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Net;
 using System.Security.Cryptography;
@@ -41,11 +41,43 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 {
     services.AddControllers();
     services.AddEndpointsApiExplorer();
-    services.AddSwaggerGen();
+    services.AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
 
-    // Add your services here
+        // Define o esquema de segurança
+        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            In = ParameterLocation.Header,
+            Description = "Insira 'Bearer' [espaço] e seu token JWT",
+            Name = "Authorization",
+            Type = SecuritySchemeType.ApiKey,
+            BearerFormat = "JWT",
+            Scheme = "Bearer"
+        });
+
+        c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+            {
+                new OpenApiSecurityScheme {
+                    Reference = new OpenApiReference {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                new string[] {}
+            }
+        });
+    });
+
+    //Command Handler
     services.AddTransient<AccountCommandHandler>();
+    services.AddTransient<ContasPagasCommandHandler>();
+
+    //Repository
     services.AddTransient<IAccountRepository, AccountRepository>();
+    services.AddTransient<IContasPagasRepository, ContasPagasRepository>();
+
+    //Map
     services.AddTransient<UsuarioMap, UsuarioMap>();
 
     // Set the connection string
