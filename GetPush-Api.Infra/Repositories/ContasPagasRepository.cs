@@ -4,14 +4,24 @@ using GetPush_Api.Domain.Entities;
 using GetPush_Api.Domain.Repositories;
 using GetPush_Api.Shared;
 using System.Data.SqlClient;
+using System.Drawing;
 
 namespace GetPush_Api.Infra.Repositories
 {
     public class ContasPagasRepository : IContasPagasRepository
     {
-        public Task DeleteContasPagas(Usuario usuario)
+        public async Task DeleteContasPagas(Guid contasPagasId)
         {
-            throw new NotImplementedException();
+            using (var conn = new SqlConnection(Runtime.ConnectionString))
+            {
+                var query = @"delete 
+                                from contasPagas 
+                               where id = @Id";
+
+                var parameters = new { Id = contasPagasId };
+
+                await conn.ExecuteAsync(query, parameters);
+            }
         }
 
         public async Task<IEnumerable<ContasPagarResult>> GetContasPagas(Usuario usuario)
@@ -61,14 +71,73 @@ namespace GetPush_Api.Infra.Repositories
             }
         }
 
-        public Task InsertContasPagas(Usuario usuario)
+        public async Task InsertContasPagas(ContasPagas contasPagas)
         {
-            throw new NotImplementedException();
+            using (var conn = new SqlConnection(Runtime.ConnectionString))
+            {
+                var query = @"insert 
+                                into contasPagas 
+                                    (id,
+	                                 descricao,
+	                                 tipoContasPagar_code,
+	                                 data_pagamento,
+	                                 valor,
+	                                 usuario_id,
+	                                 data_cadastro,
+	                                 data_alterado,
+	                                 usuario_id_cadastro)
+                             values (newid(),
+                                     @Descricao,
+	                                 @TipoContasPagar_code,
+	                                 @Data_pagamento,
+	                                 @Valor,
+	                                 @Usuario_id,
+	                                 @Data_cadastro,
+	                                 @Data_alterado,
+	                                 @Usuario_id_cadastro)";
+
+                var parameters = new
+                {
+                    Descricao = contasPagas.descricao,
+                    TipoContasPagar_code = contasPagas.tipoContasPagas.code,
+                    Data_pagamento = contasPagas.data_pagamento,
+                    Valor = contasPagas.valor,
+                    Usuario_id = contasPagas.usuario.id,
+                    Data_cadastro = contasPagas.data_cadastro,
+                    Data_alterado = contasPagas.data_alterado,
+                    Usuario_id_cadastro = contasPagas.usuarioCadastro.id
+                };
+
+                await conn.ExecuteAsync(query, parameters);
+            }
         }
 
-        public Task UpdateContasPagas(Usuario usuario)
+        public async Task UpdateContasPagas(ContasPagas contasPagas)
         {
-            throw new NotImplementedException();
+            using (var conn = new SqlConnection(Runtime.ConnectionString))
+            {
+                var query = @"update contasPagas 
+                                 set descricao = @Descricao,
+	                                 tipoContasPagar_code = @TipoContasPagar_code,
+	                                 data_pagamento = @Data_pagamento,
+	                                 valor = @Valor,
+	                                 data_alterado = @Data_alterado,
+	                                 usuario_id_cadastro = @Usuario_id_cadastro
+                               where id = @Id";
+
+                var parameters = new
+                {
+                    Id = contasPagas.id,
+                    Descricao = contasPagas.descricao,
+                    TipoContasPagar_code = contasPagas.tipoContasPagas.code,
+                    Data_pagamento = contasPagas.data_pagamento,
+                    Valor = contasPagas.valor,
+                    Data_alterado = contasPagas.data_alterado,
+                    Usuario_id_cadastro = contasPagas.usuarioCadastro.id
+                };
+
+                await conn.ExecuteAsync(query, parameters);
+            }
         }
     }
 }

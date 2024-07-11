@@ -2,6 +2,6 @@
 {
     public class Usuario
     {
-        public Guid id {  get; set; }
+        public Guid? id {  get; set; }
     }
 }

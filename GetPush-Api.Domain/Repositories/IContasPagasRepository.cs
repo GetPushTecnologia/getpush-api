@@ -6,8 +6,8 @@ namespace GetPush_Api.Domain.Repositories
     public interface IContasPagasRepository
     {
         Task<IEnumerable<ContasPagarResult>> GetContasPagas(Usuario usuario);
-        Task InsertContasPagas(Usuario usuario);
-        Task UpdateContasPagas(Usuario usuario);
-        Task DeleteContasPagas(Usuario usuario);
+        Task InsertContasPagas(ContasPagas contasPagas);
+        Task UpdateContasPagas(ContasPagas contasPagas);
+        Task DeleteContasPagas(Guid contasPagasId);
     }
 }

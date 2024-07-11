@@ -1,13 +1,16 @@
 ﻿using GetPush_Api.Domain.Commands.Handlers;
 using GetPush_Api.Domain.Entities;
+using GetPush_Api.Domain.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+using System.Net;
 
 namespace GetPush_Api.Controllers
 {
     [ApiController]
     [Route("v1")]
-    public class ContasPagasController : ControllerBase
+    public class ContasPagasController : BaseController
     {
         private readonly ContasPagasCommandHandler _handler;
         public ContasPagasController(ContasPagasCommandHandler handler)
@@ -18,66 +21,93 @@ namespace GetPush_Api.Controllers
         private Guid UsuarioId()
         {
             var userIdString = this.User.FindFirst("usuarioId")?.Value ?? throw new InvalidOperationException("O usuário não possui um ID válido.");
-            return new Guid(userIdString);            
+            return new Guid(userIdString);
         }
-
+                
         [HttpGet]
-        [Route("getContasPagas")]
+        [Route(nameof(GetContasPagas))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [SwaggerOperation(Summary = "Contas a pagar", Description = "Buscar lista de contas pagas")]
         [Authorize]
         public async Task<IActionResult> GetContasPagas()
         {
             try
             {
-                return Ok(await _handler.GetContasPagas(new Usuario { id = UsuarioId() }));
+                var contasPagas = await _handler.GetContasPagas(
+                    new Usuario { id = UsuarioId() }
+                    );
+
+                return ApiResponse(true, "Dados recuperados com sucesso", contasPagas);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "Erro", Error = ex.Message });
+                return ErrorResponse($"Erro: {ex.Message}");
             }
         }
 
         [HttpPost]
-        [Route("insertContasPagas")]
+        [Route(nameof(InsertContasPagas))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [SwaggerOperation(Summary = "Contas a pagar", Description = "Inserir conta paga")]
         [Authorize]
-        public async Task<IActionResult> InsertContasPagas()
+        public async Task<IActionResult> InsertContasPagas([FromBody] ContasPagas contasPagas)
         {
             try
             {
-                return Ok(await _handler.InsertContasPagas(new Usuario { id = UsuarioId() }));
+                var usuarioId = UsuarioId();
+                contasPagas.usuario = new Usuario { id = usuarioId };
+                contasPagas.usuarioCadastro = new Usuario { id = usuarioId };
+                contasPagas.AtualizaDataBrasil(new Utilidades());
+
+                await _handler.InsertContasPagas(contasPagas);
+
+                return ApiResponse(true, "Gravação realizada com sucesso");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "Erro", Error = ex.Message });
+                return ErrorResponse($"Erro: {ex.Message}");
             }
         }
 
-        [HttpPost]
-        [Route("updateContasPagas")]
+        [HttpPut]
+        [Route(nameof(UpdateContasPagas))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [SwaggerOperation(Summary = "Contas a pagar", Description = "Atualizar conta paga")]
         [Authorize]
-        public async Task<IActionResult> UpdateContasPagas()
+        public async Task<IActionResult> UpdateContasPagas([FromBody] ContasPagas contasPagas)
         {
             try
             {
-                return Ok(await _handler.UpdateContasPagas(new Usuario { id = UsuarioId() }));
+                var usuarioId = UsuarioId();
+                contasPagas.usuarioCadastro = new Usuario { id = usuarioId };
+                contasPagas.AtualizaDataBrasil(new Utilidades());
+
+                await _handler.UpdateContasPagas(contasPagas);
+
+                return ApiResponse(true, "Atualização realizada com sucesso");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "Erro", Error = ex.Message });
+                return ErrorResponse($"Erro: {ex.Message}");
             }
         }
 
-        [HttpPost]
-        [Route("deleteContasPagas")]
+        [HttpDelete]
+        [Route(nameof(DeleteContasPagas) + "/{contasPagasId}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [SwaggerOperation(Summary = "Contas a pagar", Description = "Exclusão conta paga")]
         [Authorize]
-        public async Task<IActionResult> DeleteContasPagas()
+        public async Task<IActionResult> DeleteContasPagas(Guid contasPagasId)
         {
             try
-            {
-                return Ok(await _handler.DeleteContasPagas(new Usuario { id = UsuarioId() }));
+            {   
+                await _handler.DeleteContasPagas(contasPagasId);
+
+                return ApiResponse(true, "Exclusão realizada com sucesso");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "Erro", Error = ex.Message });
+                return ErrorResponse($"Erro: {ex.Message}");
             }
         }
     }

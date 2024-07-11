@@ -1,6 +1,7 @@
 using GetPush_Api.Domain.Commands.Handlers;
 using GetPush_Api.Domain.Commands.Results.map;
 using GetPush_Api.Domain.Repositories;
+using GetPush_Api.Domain.Util;
 using GetPush_Api.Infra.Repositories;
 using GetPush_Api.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -27,7 +28,7 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 // Configure services
-ConfigureServices(builder.Services, configuration);
+ConfigureServices(builder.Services, configuration, builder);
 
 var app = builder.Build();
 
@@ -37,9 +38,15 @@ Configure(app, app.Environment);
 app.Run();
 
 // Configuration methods
-void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+void ConfigureServices(IServiceCollection services, IConfiguration configuration, WebApplicationBuilder builder)
 {
-    services.AddControllers();
+    services.AddControllers()
+         .AddJsonOptions(options =>
+         {
+             options.JsonSerializerOptions.PropertyNamingPolicy = null; // Preserva o caso das propriedades
+             options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+         });
+
     services.AddEndpointsApiExplorer();
     services.AddSwaggerGen(c =>
     {
@@ -69,16 +76,19 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
         });
     });
 
-    //Command Handler
+    // Command Handler
     services.AddTransient<AccountCommandHandler>();
     services.AddTransient<ContasPagasCommandHandler>();
 
-    //Repository
+    // Repository
     services.AddTransient<IAccountRepository, AccountRepository>();
     services.AddTransient<IContasPagasRepository, ContasPagasRepository>();
 
-    //Map
-    services.AddTransient<UsuarioMap, UsuarioMap>();
+    // Map
+    services.AddTransient<UsuarioMap>();
+
+    // Utils
+    services.AddTransient<Utilidades>();
 
     // Set the connection string
     Runtime.ConnectionString = configuration.GetConnectionString("CnnStr")
@@ -117,7 +127,14 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
         options.SlidingExpiration = true; // Renova a expiração em cada requisição
     });
 
-    builder.Services.AddAuthentication();
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy("ApiScope", policy =>
+        {
+            policy.RequireAuthenticatedUser();
+            policy.RequireClaim("scope", "api1");
+        });
+    });
 
     // Clear default logging providers and add Serilog
     services.AddLogging(logging =>
@@ -157,11 +174,21 @@ void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         catch (Exception ex)
         {
             // Log error details using Serilog
-            //Log.Logger.LogError(ex, "An error occurred while processing the request.");
+            Log.Logger.Error(ex, "An error occurred while processing the request.");
 
-            // Send a generic error response
+            // Send a detailed error response
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            await context.Response.WriteAsync("An unexpected fault happened. Try again later.");
+            context.Response.ContentType = "application/json";
+
+            var errorResponse = new
+            {
+                Message = "An unexpected fault happened. Try again later.",
+                Error = ex.Message,
+                StackTrace = ex.StackTrace
+            };
+
+            var errorJson = System.Text.Json.JsonSerializer.Serialize(errorResponse);
+            await context.Response.WriteAsync(errorJson);
         }
     });
 

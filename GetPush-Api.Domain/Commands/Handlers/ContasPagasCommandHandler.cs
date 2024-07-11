@@ -12,9 +12,9 @@ namespace GetPush_Api.Domain.Commands.Handlers
             _repository = repository;
         }
 
-        public async Task DeleteContasPagas(Usuario usuario)
+        public async Task DeleteContasPagas(Guid contasPagasId)
         {
-            await _repository.DeleteContasPagas(usuario);
+            await _repository.DeleteContasPagas(contasPagasId);
         }
 
         public async Task<IEnumerable<ContasPagarResult>> GetContasPagas(Usuario usuario)
@@ -22,14 +22,14 @@ namespace GetPush_Api.Domain.Commands.Handlers
             return await _repository.GetContasPagas(usuario);
         }
 
-        public async Task InsertContasPagas(Usuario usuario)
+        public async Task InsertContasPagas(ContasPagas contasPagas)
         {
-            await _repository.DeleteContasPagas(usuario);
+            await _repository.InsertContasPagas(contasPagas);
         }
 
-        public async Task UpdateContasPagas(Usuario usuario)
+        public async Task UpdateContasPagas(ContasPagas contasPagas)
         {
-            await _repository.DeleteContasPagas(usuario);
+            await _repository.UpdateContasPagas(contasPagas);
         }
     }
 }
