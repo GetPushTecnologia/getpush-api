@@ -1,12 +1,21 @@
-﻿using System;
+﻿using GetPush_Api.Domain.Entities;
+using System;
 
 namespace GetPush_Api.Domain.Commands.Results
 {
-    public class ContasPagarResult
+    public class ContasPagasResult
     {
+        public ContasPagasResult()
+        {
+            descricao = string.Empty;
+            tipoContaPaga = new TipoContaPaga();
+            usuario = new UsuarioResult();
+            usuarioCadastro = new UsuarioResult();
+        }
+
         public Guid id { get; set; }
         public string descricao { get; set; }
-        public TipoContasPagar tipoContasPagar { get; set; }
+        public TipoContaPaga tipoContaPaga { get; set; }
         public DateTime data_pagamento { get; set; }
         public decimal valor { get; set; }
         public UsuarioResult usuario { get; set; }

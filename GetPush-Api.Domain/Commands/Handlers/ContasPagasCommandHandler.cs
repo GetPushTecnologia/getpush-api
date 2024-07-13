@@ -12,12 +12,12 @@ namespace GetPush_Api.Domain.Commands.Handlers
             _repository = repository;
         }
 
-        public async Task DeleteContasPagas(Guid contasPagasId)
+        public async Task DeleteContasPagas(Guid contaPagaId)
         {
-            await _repository.DeleteContasPagas(contasPagasId);
+            await _repository.DeleteContasPagas(contaPagaId);
         }
 
-        public async Task<IEnumerable<ContasPagarResult>> GetContasPagas(Usuario usuario)
+        public async Task<IEnumerable<ContasPagasResult>> GetContasPagas(Usuario usuario)
         {
             return await _repository.GetContasPagas(usuario);
         }

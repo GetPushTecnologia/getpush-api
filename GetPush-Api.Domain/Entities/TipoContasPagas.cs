@@ -2,9 +2,9 @@
 
 namespace GetPush_Api.Domain.Entities
 {
-    public class TipoContasPagas
+    public class TipoContaPaga
     {
-        public TipoContasPagas()
+        public TipoContaPaga()
         {
             descricao = string.Empty;
             usuarioCadastro = new Usuario();

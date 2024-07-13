@@ -4,13 +4,12 @@ using GetPush_Api.Domain.Entities;
 using GetPush_Api.Domain.Repositories;
 using GetPush_Api.Shared;
 using System.Data.SqlClient;
-using System.Drawing;
 
 namespace GetPush_Api.Infra.Repositories
 {
     public class ContasPagasRepository : IContasPagasRepository
     {
-        public async Task DeleteContasPagas(Guid contasPagasId)
+        public async Task DeleteContasPagas(Guid contaPagaId)
         {
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
@@ -18,24 +17,28 @@ namespace GetPush_Api.Infra.Repositories
                                 from contasPagas 
                                where id = @Id";
 
-                var parameters = new { Id = contasPagasId };
+                var parameters = new { Id = contaPagaId };
 
                 await conn.ExecuteAsync(query, parameters);
             }
         }
 
-        public async Task<IEnumerable<ContasPagarResult>> GetContasPagas(Usuario usuario)
+        public async Task<IEnumerable<ContasPagasResult>> GetContasPagas(Usuario usuario)
         {
-            var query = @"select id,
-							     descricao,
-							     tipoContasPagar_code,
-							     data_pagamento,
-							     valor,
-							     usuario_id,
-							     data_cadastro,
-							     data_alterado,
-							     usuario_id_cadastro
-						    from contasPagas
+            var query = @"select cp.id,
+							     cp.descricao,
+							     cp.tipoContasPagar_code,
+							     cp.data_pagamento,
+							     cp.valor,
+							     cp.usuario_id,
+                                 u.nome,
+							     cp.data_cadastro,
+							     cp.data_alterado,
+							     cp.usuario_id_cadastro
+                                 uc.nome as nomeCadastro
+						    from contasPagas cp
+                      inner join usuario u on u.id = usuario_id
+                      inner join usuario uc on u.id = usuario_id_cadastro
                            where usuario_id = @Usuario_id";
 
             using (var conn = new SqlConnection(Runtime.ConnectionString))
@@ -43,31 +46,36 @@ namespace GetPush_Api.Infra.Repositories
                 await conn.OpenAsync();
                 var result = await conn.QueryAsync(query, new { Usuario_id = usuario.id });
 
-                var contasPagarList = new List<ContasPagarResult>();
+                var contasPagarList = new List<ContasPagasResult>();
 
                 if (result != null)
                 {
                     foreach (var item in result)
                     {
-                        contasPagarList.Add(new ContasPagarResult
+                        contasPagarList.Add(new ContasPagasResult
                         {
                             id = item.id,
                             descricao = item.descricao,
-                            tipoContasPagar = new TipoContasPagar { code = item.tipoContasPagar_code },
+                            tipoContaPaga = new TipoContaPaga { code = item.tipoContasPagar_code },
                             data_pagamento = item.data_pagamento,
                             valor = item.valor,
-                            usuario = new UsuarioResult { id = item.usuario_id },
+                            usuario = new UsuarioResult { 
+                                id = item.usuario_id,
+                                nome = item.nome
+                            },
                             data_cadastro = item.data_cadastro,
                             data_alterado = item.data_alterado,
-                            usuarioCadastro = new UsuarioResult { id = item.usuario_id_cadastro }
+                            usuarioCadastro = new UsuarioResult { 
+                                id = item.usuario_id_cadastro,
+                                nome = item.nomeCadastro
+                            }
                         });
                     }
 
                     return contasPagarList;
                 }
 
-                return new List<ContasPagarResult>();
-
+                return new List<ContasPagasResult>();
             }
         }
 
@@ -99,7 +107,7 @@ namespace GetPush_Api.Infra.Repositories
                 var parameters = new
                 {
                     Descricao = contasPagas.descricao,
-                    TipoContasPagar_code = contasPagas.tipoContasPagas.code,
+                    TipoContasPagar_code = contasPagas.tipoContaPaga.code,
                     Data_pagamento = contasPagas.data_pagamento,
                     Valor = contasPagas.valor,
                     Usuario_id = contasPagas.usuario.id,
@@ -129,7 +137,7 @@ namespace GetPush_Api.Infra.Repositories
                 {
                     Id = contasPagas.id,
                     Descricao = contasPagas.descricao,
-                    TipoContasPagar_code = contasPagas.tipoContasPagas.code,
+                    TipoContasPagar_code = contasPagas.tipoContaPaga.code,
                     Data_pagamento = contasPagas.data_pagamento,
                     Valor = contasPagas.valor,
                     Data_alterado = contasPagas.data_alterado,

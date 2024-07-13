@@ -7,14 +7,14 @@ namespace GetPush_Api.Domain.Entities
         public ContasPagas() 
         {
             descricao = string.Empty;
-            tipoContasPagas = new TipoContasPagas();
+            tipoContaPaga = new TipoContaPaga();
             usuario = new Usuario();
             usuarioCadastro = new Usuario();
         }       
 
         public Guid? id { get; set; }
         public string descricao { get; set; }
-        public TipoContasPagas tipoContasPagas { get; set; } 
+        public TipoContaPaga tipoContaPaga { get; set; } 
         public DateTime data_pagamento { get; set; }
         public decimal valor { get; set; }
         public Usuario usuario { get; set; }

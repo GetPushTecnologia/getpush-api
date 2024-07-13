@@ -9,7 +9,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Net;
-using System.Security.Cryptography;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -79,10 +78,12 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     // Command Handler
     services.AddTransient<AccountCommandHandler>();
     services.AddTransient<ContasPagasCommandHandler>();
+    services.AddTransient<TipoContasPagasCommandHandler>();
 
     // Repository
     services.AddTransient<IAccountRepository, AccountRepository>();
     services.AddTransient<IContasPagasRepository, ContasPagasRepository>();
+    services.AddTransient<ITipoContasPagasRepository, TipoContasPagasRepository>();
 
     // Map
     services.AddTransient<UsuarioMap>();
