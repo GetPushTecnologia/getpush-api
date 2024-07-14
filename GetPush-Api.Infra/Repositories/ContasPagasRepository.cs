@@ -37,8 +37,8 @@ namespace GetPush_Api.Infra.Repositories
 							     cp.usuario_id_cadastro
                                  uc.nome as nomeCadastro
 						    from contasPagas cp
-                      inner join usuario u on u.id = usuario_id
-                      inner join usuario uc on u.id = usuario_id_cadastro
+                      inner join usuario u on u.id = cp.usuario_id
+                      inner join usuario uc on u.id = cp.usuario_id_cadastro
                            where usuario_id = @Usuario_id";
 
             using (var conn = new SqlConnection(Runtime.ConnectionString))

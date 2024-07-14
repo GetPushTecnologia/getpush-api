@@ -7,9 +7,9 @@ using System.Data.SqlClient;
 
 namespace GetPush_Api.Infra.Repositories
 {
-    public class TipoContasPagasRepository : ITipoContasPagasRepository
+    public class TipoContaPagaRepository : ITipoContaPagaRepository
     {
-        public async Task DeleteContasPagas(Guid contasPagasId)
+        public async Task DeleteTipoContaPaga(Guid contasPagasId)
         {
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
@@ -23,7 +23,7 @@ namespace GetPush_Api.Infra.Repositories
             }
         }
 
-        public async Task<IEnumerable<TipoContaPagaResult>> GetTipoContaPagas()
+        public async Task<IEnumerable<TipoContaPagaResult>> GetTipoContaPaga()
         {
             var query = @"select tcp.id,
                                  tcp.code,
@@ -66,8 +66,8 @@ namespace GetPush_Api.Infra.Repositories
                 return new List<TipoContaPagaResult>();
             }
         }
-
-        public async Task InsertContasPagas(TipoContaPaga tipoContasPagas)
+        
+        public async Task InsertTipoContaPaga(TipoContaPaga tipoContasPagas)
         {
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
@@ -99,7 +99,7 @@ namespace GetPush_Api.Infra.Repositories
             }
         }
 
-        public async Task UpdateContasPagas(TipoContaPaga tipoContasPagas)
+        public async Task UpdateTipoContaPaga(TipoContaPaga tipoContasPagas)
         {
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {

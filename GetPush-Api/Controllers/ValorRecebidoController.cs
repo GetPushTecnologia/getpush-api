@@ -10,11 +10,11 @@ namespace GetPush_Api.Controllers
 {
     [ApiController]
     [Route("v1")]
-    public class TipoContasPagasController : BaseController
+    public class ValorRecebidoController : BaseController
     {
-        private readonly TipoContasPagasCommandHandler _handler;
+        private readonly ValorRecebidoCommandHandler _handler;
 
-        public TipoContasPagasController(TipoContasPagasCommandHandler handler)
+        public ValorRecebidoController(ValorRecebidoCommandHandler handler)
         {
             _handler = handler;
         }
@@ -26,16 +26,19 @@ namespace GetPush_Api.Controllers
         }
 
         [HttpGet]
-        [Route(nameof(GetTipoContaPaga))]
+        [Route(nameof(GetValorRecebido))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [SwaggerOperation(Summary = "Tipo Contas pagas", Description = "Buscar lista de tipo de contas pagas")]
+        [SwaggerOperation(Summary = "Valor Recebido", Description = "Buscar lista de valores recebidos")]
         [Authorize]
-        public async Task<IActionResult> GetTipoContaPaga()
+        public async Task<IActionResult> GetValorRecebido()
         {
             try
             {
-                var tipoContasPagas = await _handler.GetTipoContaPaga();
-                return ApiResponse(true, "Dados recuperados com sucesso", tipoContasPagas);
+                var valorRecebido = await _handler.GetValorRecebido(
+                    new Usuario { id = UsuarioId() }
+                    );
+
+                return ApiResponse(true, "Dados recuperados com sucesso", valorRecebido);
             }
             catch (Exception ex)
             {
@@ -44,19 +47,19 @@ namespace GetPush_Api.Controllers
         }
 
         [HttpPost]
-        [Route(nameof(InsertTipoContaPaga))]
+        [Route(nameof(InsertValorRecebido))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [SwaggerOperation(Summary = "Tipo Contas pagas", Description = "Inserir tipo conta paga")]
+        [SwaggerOperation(Summary = "Valor Recebido", Description = "Inserir valor recebido")]
         [Authorize]
-        public async Task<IActionResult> InsertTipoContaPaga([FromBody] TipoContaPaga tipoContaPaga)
+        public async Task<IActionResult> InsertValorRecebido([FromBody] ValorRecebido valorRecebido)
         {
             try
             {
                 var usuarioId = UsuarioId();
-                tipoContaPaga.usuarioCadastro = new Usuario { id = usuarioId };
-                tipoContaPaga.AtualizaDataBrasil(new Utilidades());
+                valorRecebido.usuarioCadastro = new Usuario { id = usuarioId };
+                valorRecebido.AtualizaDataBrasil(new Utilidades());
 
-                await _handler.InsertTipoContaPaga(tipoContaPaga);
+                await _handler.InsertValorRecebido(valorRecebido);
 
                 return ApiResponse(true, "Gravação realizada com sucesso");
             }
@@ -67,19 +70,19 @@ namespace GetPush_Api.Controllers
         }
 
         [HttpPut]
-        [Route(nameof(UpdateTipoContaPaga))]
+        [Route(nameof(UpdateValorRecebido))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [SwaggerOperation(Summary = "Tipo Contas pagas", Description = "Atualiza tipo contas paga")]
+        [SwaggerOperation(Summary = "Valor Recebido", Description = "Atualiza valor recebido")]
         [Authorize]
-        public async Task<IActionResult> UpdateTipoContaPaga([FromBody] TipoContaPaga tipoContaPaga)
+        public async Task<IActionResult> UpdateValorRecebido([FromBody] ValorRecebido valorRecebido)
         {
             try
             {
                 var usuarioId = UsuarioId();
-                tipoContaPaga.usuarioCadastro = new Usuario { id = usuarioId };
-                tipoContaPaga.AtualizaDataBrasil(new Utilidades());
+                valorRecebido.usuarioCadastro = new Usuario { id = usuarioId };
+                valorRecebido.AtualizaDataBrasil(new Utilidades());
 
-                await _handler.UpdateTipoContaPaga(tipoContaPaga);
+                await _handler.UpdateValorRecebido(valorRecebido);
 
                 return ApiResponse(true, "Atualização realizada com sucesso");
             }
@@ -90,15 +93,15 @@ namespace GetPush_Api.Controllers
         }
 
         [HttpDelete]
-        [Route(nameof(DeleteTipoContaPaga) + "/{tipoContaPagaId}")]
+        [Route(nameof(DeleteValorRecebido) + "/{valorRecebidoId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [SwaggerOperation(Summary = "Tipo Contas pagas", Description = "Exclusão tipo conta paga")]
+        [SwaggerOperation(Summary = "Valor Recebido", Description = "Exclusão valor recebido")]
         [Authorize]
-        public async Task<IActionResult> DeleteTipoContaPaga(Guid tipoContaPagaId)
+        public async Task<IActionResult> DeleteValorRecebido(Guid valorRecebidoId)
         {
             try
             {
-                await _handler.DeleteTipoContaPaga(tipoContaPagaId);
+                await _handler.DeleteValorRecebido(valorRecebidoId);
 
                 return ApiResponse(true, "Exclusão realizada com sucesso");
             }

@@ -6,9 +6,9 @@ namespace GetPush_Api.Domain.Commands.Handlers
 {
     public class TipoContasPagasCommandHandler
     {
-        private readonly ITipoContasPagasRepository _repository;
+        private readonly ITipoContaPagaRepository _repository;
 
-        public TipoContasPagasCommandHandler(ITipoContasPagasRepository repository)
+        public TipoContasPagasCommandHandler(ITipoContaPagaRepository repository)
         {
             _repository = repository;
         }
@@ -20,6 +20,7 @@ namespace GetPush_Api.Domain.Commands.Handlers
 
         public async Task InsertTipoContaPaga(TipoContaPaga tipoContaPaga)
         {
+            tipoContaPaga.code = await GetUltimoCode();
             await _repository.InsertTipoContaPaga(tipoContaPaga);
         }
 
@@ -33,7 +34,10 @@ namespace GetPush_Api.Domain.Commands.Handlers
             await _repository.DeleteTipoContaPaga(tipoContaPagaId);
         }
 
-        private Task<int> GetUltimoCode()
-        { }
+        private async Task<int> GetUltimoCode()
+        {
+            var tipoContaPagaList = await _repository.GetTipoContaPaga();
+            return tipoContaPagaList.Max(t => t.code);
+        }
     }
 }
