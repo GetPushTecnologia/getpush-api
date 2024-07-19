@@ -7,14 +7,14 @@ namespace GetPush_Api.Domain.Entities
         public ValorRecebido()
         {
             descricao = string.Empty;
-            tipoValorRecebico = new TipoValorRecebido();
+            tipoValorRecebido = new TipoValorRecebido();
             usuario = new Usuario();
             usuarioCadastro = new Usuario();
         }
 
-        public Guid id { get; set; }
+        public Guid? id { get; set; }
         public string descricao { get; set; }
-        public TipoValorRecebido tipoValorRecebico { get; set; }
+        public TipoValorRecebido tipoValorRecebido { get; set; }
         public decimal valor { get; set; }
         public DateTime data_recebimento { get; set; }
         public Usuario usuario { get; set; }

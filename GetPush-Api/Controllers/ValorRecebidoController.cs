@@ -38,7 +38,9 @@ namespace GetPush_Api.Controllers
                     new Usuario { id = UsuarioId() }
                     );
 
-                return ApiResponse(true, "Dados recuperados com sucesso", valorRecebido);
+                var msg = valorRecebido.Count() > 0 ? "Dados recuperados com sucesso" : "Não retornou dados.";
+
+                return ApiResponse(true, msg, valorRecebido);
             }
             catch (Exception ex)
             {
@@ -57,6 +59,7 @@ namespace GetPush_Api.Controllers
             {
                 var usuarioId = UsuarioId();
                 valorRecebido.usuarioCadastro = new Usuario { id = usuarioId };
+                valorRecebido.usuario = new Usuario { id = usuarioId };
                 valorRecebido.AtualizaDataBrasil(new Utilidades());
 
                 await _handler.InsertValorRecebido(valorRecebido);

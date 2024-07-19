@@ -36,7 +36,9 @@ namespace GetPush_Api.Controllers
             {
                 var tipoValorRecebido = await _handler.GetTipoValorRecebido();
 
-                return ApiResponse(true, "Dados recuperados com sucesso", tipoValorRecebido);
+                var msg = tipoValorRecebido.Count() > 0 ? "Dados recuperados com sucesso" : "Não retornou dados.";
+
+                return ApiResponse(true, msg, tipoValorRecebido);
             }
             catch (Exception ex)
             {

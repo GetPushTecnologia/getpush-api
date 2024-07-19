@@ -28,12 +28,12 @@ namespace GetPush_Api.Infra.Repositories
             var query = @"select tvr.id,
                                  tvr.code,
 							     tvr.descricao,                                
-							     vr.data_cadastro,
-							     vr.data_alterado,
-							     vr.usuario_id_cadastro
-                                 uc.nome as nomeCadastro
+							     tvr.data_cadastro,
+							     tvr.data_alterado,
+							     tvr.usuario_id_cadastro,
+                                 u.nome as nomeCadastro
 						    from tipoValorRecebido tvr
-                      inner join usuario uc on u.id = vr.usuario_id_cadastro";
+                      inner join usuario u on u.id = tvr.usuario_id_cadastro";
 
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {

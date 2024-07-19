@@ -27,14 +27,14 @@ namespace GetPush_Api.Infra.Repositories
         {
             var query = @"select vr.id,
 							     vr.descricao,
-							     vr.tipoValorRecebico_code,
+							     vr.tipoValorRecebido_code,
 							     vr.data_recebimento,
 							     vr.valor,
 							     vr.usuario_id,
                                  u.nome,
 							     vr.data_cadastro,
 							     vr.data_alterado,
-							     vr.usuario_id_cadastro
+							     vr.usuario_id_cadastro,
                                  uc.nome as nomeCadastro
 						    from valorRecebido vr
                       inner join usuario u on u.id = vr.usuario_id
@@ -56,7 +56,7 @@ namespace GetPush_Api.Infra.Repositories
                         {
                             id = item.id,
                             descricao = item.descricao,
-                            tipoValorRecebico = new TipoValorRecebidoResult { code = item.tipoValorRecebico_code },
+                            tipoValorRecebido = new TipoValorRecebidoResult { code = item.tipoValorRecebido_code },
                             data_recebimento = item.data_pagamento,
                             valor = item.valor,
                             usuario = new UsuarioResult
@@ -89,7 +89,7 @@ namespace GetPush_Api.Infra.Repositories
                                 into valorRecebido 
                                     (id,
                                      descricao,
-                                     tipoValorRecebico_code,
+                                     tipoValorRecebido_code,
                                      data_recebimento,
                                      valor,
                                      usuario_id,
@@ -98,7 +98,7 @@ namespace GetPush_Api.Infra.Repositories
                                      usuario_id_cadastro)
                              values (newid(),
                                      @Descricao,
-	                                 @TipoValorRecebico_code,
+	                                 @TipoValorRecebido_code,
 	                                 @Data_recebimento,
 	                                 @Valor,
 	                                 @Usuario_id,
@@ -109,7 +109,7 @@ namespace GetPush_Api.Infra.Repositories
                 var parameters = new
                 {
                     Descricao = valorRecebido.descricao,
-                    TipoContasPagar_code = valorRecebido.tipoValorRecebico.code,
+                    TipoValorRecebido_code = valorRecebido.tipoValorRecebido.code,
                     Data_recebimento = valorRecebido.data_recebimento,
                     Valor = valorRecebido.valor,
                     Usuario_id = valorRecebido.usuario.id,
@@ -128,7 +128,7 @@ namespace GetPush_Api.Infra.Repositories
             {
                 var query = @"update valorRecebido 
                                  set descricao = @Descricao,
-	                                 tipoValorRecebico_code = @TipoValorRecebico_code,
+	                                 tipoValorRecebido_code = @TipoValorRecebido_code,
 	                                 data_recebimento = @Data_recebimento,
 	                                 valor = @Valor,
 	                                 data_alterado = @Data_alterado,
@@ -139,7 +139,7 @@ namespace GetPush_Api.Infra.Repositories
                 {
                     Id = valorRecebido.id,
                     Descricao = valorRecebido.descricao,
-                    TipoContasPagar_code = valorRecebido.tipoValorRecebico.code,
+                    TipoContasPagar_code = valorRecebido.tipoValorRecebido.code,
                     Data_pagamento = valorRecebido.data_recebimento,
                     Valor = valorRecebido.valor,
                     Data_alterado = valorRecebido.data_alterado,

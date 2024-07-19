@@ -11,7 +11,7 @@ namespace GetPush_Api.Domain.Entities
             usuarioCadastro = new Usuario();
         }
 
-        public Guid id { get; set; }
+        public Guid? id { get; set; }
         public int code { get; set; }
         public string descricao { get; set; }
         public DateTime data_cadastro { get; set; }

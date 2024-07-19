@@ -34,7 +34,7 @@ namespace GetPush_Api.Infra.Repositories
                                  u.nome,
 							     cp.data_cadastro,
 							     cp.data_alterado,
-							     cp.usuario_id_cadastro
+							     cp.usuario_id_cadastro,
                                  uc.nome as nomeCadastro
 						    from contasPagas cp
                       inner join usuario u on u.id = cp.usuario_id

@@ -25,14 +25,14 @@ namespace GetPush_Api.Infra.Logging
             LogManager.Configuration.LoggingRules.Add(sentinalRule);
 
             // Setup the logging view for Harvester - http://harvester.codeplex.com
-            var harvesterTarget = new OutputDebugStringTarget()
-            {
-                Name = "harvester",
-                Layout = "${log4jxmlevent:includeNLogData=false}"
-            };
-            var harvesterRule = new LoggingRule("*", LogLevel.Trace, harvesterTarget);
-            LogManager.Configuration.AddTarget("harvester", harvesterTarget);
-            LogManager.Configuration.LoggingRules.Add(harvesterRule);
+            //var harvesterTarget = new OutputDebugStringTarget()
+            //{
+            //    Name = "harvester",
+            //    Layout = "${log4jxmlevent:includeNLogData=false}"
+            //};
+            //var harvesterRule = new LoggingRule("*", LogLevel.Trace, harvesterTarget);
+            //LogManager.Configuration.AddTarget("harvester", harvesterTarget);
+            //LogManager.Configuration.LoggingRules.Add(harvesterRule);
 #endif
 
             LogManager.ReconfigExistingLoggers();

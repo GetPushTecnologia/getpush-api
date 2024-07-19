@@ -5,14 +5,14 @@
         public ValorRecebidoResult()
         {
             descricao = string.Empty;
-            tipoValorRecebico = new TipoValorRecebidoResult();
+            tipoValorRecebido = new TipoValorRecebidoResult();
             usuario = new UsuarioResult();
             usuarioCadastro = new UsuarioResult();
         }
 
         public Guid id { get; set; } 
         public string descricao { get; set; }
-        public TipoValorRecebidoResult tipoValorRecebico { get; set; }
+        public TipoValorRecebidoResult tipoValorRecebido { get; set; }
         public decimal valor { get; set; }
         public DateTime data_recebimento { get; set; }
         public UsuarioResult usuario { get; set; }

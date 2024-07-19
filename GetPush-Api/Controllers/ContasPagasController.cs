@@ -37,7 +37,9 @@ namespace GetPush_Api.Controllers
                     new Usuario { id = UsuarioId() }
                     );
 
-                return ApiResponse(true, "Dados recuperados com sucesso", contasPagas);
+                var msg = contasPagas.Count() > 0 ? "Dados recuperados com sucesso" : "Não retornou dados.";
+
+                return ApiResponse(true, msg, contasPagas);
             }
             catch (Exception ex)
             {

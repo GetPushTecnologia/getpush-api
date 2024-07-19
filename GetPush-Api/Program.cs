@@ -1,17 +1,24 @@
 using GetPush_Api.Domain.Commands.Handlers;
 using GetPush_Api.Domain.Commands.Results.map;
 using GetPush_Api.Domain.Repositories;
+using GetPush_Api.Domain.Services;
 using GetPush_Api.Domain.Util;
 using GetPush_Api.Infra.Repositories;
+using GetPush_Api.Infra.Services;
 using GetPush_Api.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using System.Data;
+using System.Data.SqlClient;
 using System.Net;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Environment.SetEnvironmentVariable("F", "false");
 
 // Read configuration from appsettings.json
 var configuration = builder.Configuration;
@@ -88,7 +95,6 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     services.AddTransient<ITipoContaPagaRepository, TipoContaPagaRepository>();
     services.AddTransient<IValorRecebidoRepository, ValorRecebidoRepository>();
     services.AddTransient<ITipoValorRecebidoRepository, TipoValorRecebidoRepository>();
-
     // Map
     services.AddTransient<UsuarioMap>();
 
@@ -102,6 +108,10 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
                                ?? throw new InvalidOperationException("Connection string 'ClientManagers' not found.");
     Runtime.KeySecurityToken = configuration.GetConnectionString("KeySecurityToken")
                                ?? throw new InvalidOperationException("Connection string 'KeySecurityToken' not found.");
+
+
+    builder.Services.AddTransient<IDbConnection>(sp =>
+    new SqlConnection(builder.Configuration.GetConnectionString("CnnStr")));
 
     var symmetricKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Runtime.KeySecurityToken));
 
@@ -151,17 +161,21 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 
 void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 {
-    if (env.IsDevelopment())
-    {
-        app.UseDeveloperExceptionPage();
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
-    else
-    {
-        app.UseExceptionHandler("/Home/Error");
-        app.UseHsts();
-    }
+    //if (env.IsDevelopment())
+    //{
+    //    app.UseDeveloperExceptionPage();
+    //    app.UseSwagger();
+    //    app.UseSwaggerUI();
+    //}
+    //else
+    //{
+    //    app.UseExceptionHandler("/Home/Error");
+    //    app.UseHsts();
+    //}
+
+    app.UseDeveloperExceptionPage();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 
     app.UseHttpsRedirection();
     app.UseRouting();

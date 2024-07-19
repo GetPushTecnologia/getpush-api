@@ -35,7 +35,10 @@ namespace GetPush_Api.Controllers
             try
             {
                 var tipoContasPagas = await _handler.GetTipoContaPaga();
-                return ApiResponse(true, "Dados recuperados com sucesso", tipoContasPagas);
+
+                var msg = tipoContasPagas.Count() > 0 ? "Dados recuperados com sucesso" : "Não retornou dados.";
+
+                return ApiResponse(true, msg, tipoContasPagas);
             }
             catch (Exception ex)
             {
