@@ -46,6 +46,17 @@ app.Run();
 // Configuration methods
 void ConfigureServices(IServiceCollection services, IConfiguration configuration, WebApplicationBuilder builder)
 {
+    services.AddCors(options =>
+    {
+        options.AddPolicy("AllowSpecificOrigin",
+            builder =>
+            {
+                builder.WithOrigins("http://localhost:4200")
+                       .AllowAnyHeader()
+                       .AllowAnyMethod();
+            });
+    });
+
     services.AddControllers()
          .AddJsonOptions(options =>
          {
@@ -182,6 +193,7 @@ void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 
     // Use authentication and authorization
     app.UseAuthentication();
+    app.UseCors("AllowSpecificOrigin");
     app.UseAuthorization();
 
     app.Use(async (context, next) =>
