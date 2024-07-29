@@ -8,14 +8,14 @@ namespace GetPush_Api.Domain.Commands.Results
         public ContasPagasResult()
         {
             descricao = string.Empty;
-            tipoContaPaga = new TipoContaPaga();
+            tipoContaPaga = new TipoContaPagaResult();
             usuario = new UsuarioResult();
             usuarioCadastro = new UsuarioResult();
         }
 
         public Guid id { get; set; }
         public string descricao { get; set; }
-        public TipoContaPaga tipoContaPaga { get; set; }
+        public TipoContaPagaResult tipoContaPaga { get; set; }
         public DateTime data_pagamento { get; set; }
         public decimal valor { get; set; }
         public UsuarioResult usuario { get; set; }

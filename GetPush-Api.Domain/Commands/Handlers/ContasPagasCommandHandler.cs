@@ -7,9 +7,11 @@ namespace GetPush_Api.Domain.Commands.Handlers
     public class ContasPagasCommandHandler
     {
         private readonly IContasPagasRepository _repository;
-        public ContasPagasCommandHandler(IContasPagasRepository repository)
+        private readonly TipoContasPagasCommandHandler _tipocontasPagashander;
+        public ContasPagasCommandHandler(IContasPagasRepository repository, TipoContasPagasCommandHandler tipocontasPagashander)
         {
             _repository = repository;
+            _tipocontasPagashander = tipocontasPagashander;
         }
 
         public async Task DeleteContasPagas(Guid contaPagaId)
@@ -19,7 +21,8 @@ namespace GetPush_Api.Domain.Commands.Handlers
 
         public async Task<IEnumerable<ContasPagasResult>> GetContasPagas(Usuario usuario)
         {
-            return await _repository.GetContasPagas(usuario);
+            var tipoContaPagaList = await _tipocontasPagashander.GetTipoContaPaga();
+            return await _repository.GetContasPagas(usuario, (IEnumerable<TipoContaPagaResult>)tipoContaPagaList);
         }
 
         public async Task InsertContasPagas(ContasPagas contasPagas)

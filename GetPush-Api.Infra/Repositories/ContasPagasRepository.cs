@@ -23,7 +23,7 @@ namespace GetPush_Api.Infra.Repositories
             }
         }
 
-        public async Task<IEnumerable<ContasPagasResult>> GetContasPagas(Usuario usuario)
+        public async Task<IEnumerable<ContasPagasResult>> GetContasPagas(Usuario usuario, IEnumerable<TipoContaPagaResult> tipoContaPagaList)
         {
             var query = @"select cp.id,
 							     cp.descricao,
@@ -52,11 +52,18 @@ namespace GetPush_Api.Infra.Repositories
                 {
                     foreach (var item in result)
                     {
+                        var tipoContaPaga = tipoContaPagaList.Where(x => x.code == item.tipoContasPagar_code).FirstOrDefault();
+
                         contasPagarList.Add(new ContasPagasResult
                         {
                             id = item.id,
                             descricao = item.descricao,
-                            tipoContaPaga = new TipoContaPaga { code = item.tipoContasPagar_code },
+                            tipoContaPaga = new TipoContaPagaResult 
+                            { 
+                                id = tipoContaPaga != null ? tipoContaPaga.id : new Guid(),
+                                code = tipoContaPaga != null ? tipoContaPaga.code : 0,
+                                descricao = tipoContaPaga != null ? tipoContaPaga.descricao : string.Empty
+                            },
                             data_pagamento = item.data_pagamento,
                             valor = item.valor,
                             usuario = new UsuarioResult { 
