@@ -1,4 +1,4 @@
-﻿using GetPush_Api.Domain.Commands.Handlers;
+﻿using GetPush_Api.Domain.Commands.Interface;
 using GetPush_Api.Domain.Entities;
 using GetPush_Api.Domain.Util;
 using Microsoft.AspNetCore.Authorization;
@@ -12,9 +12,9 @@ namespace GetPush_Api.Controllers
     [Route("v1")]
     public class ValorRecebidoController : BaseController
     {
-        private readonly ValorRecebidoCommandHandler _handler;
+        private readonly IValorRecebidoCommandHandler _handler;
 
-        public ValorRecebidoController(ValorRecebidoCommandHandler handler)
+        public ValorRecebidoController(IValorRecebidoCommandHandler handler)
         {
             _handler = handler;
         }

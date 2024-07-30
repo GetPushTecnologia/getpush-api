@@ -6,7 +6,7 @@ namespace GetPush_Api.Domain.Repositories
     public interface IValorRecebidoRepository
     {
         Task DeleteValorRecebido(Guid valorRecebidoId);
-        Task<IEnumerable<ValorRecebidoResult>> GetValorRecebido(Usuario usuario);
+        Task<IEnumerable<ValorRecebidoResult>> GetValorRecebido(Usuario usuario, IEnumerable<TipoValorRecebidoResult> tipoValorRecebidoList);
         Task InsertValorRecebido(ValorRecebido valorRecebido);
         Task UpdateValorRecebido(ValorRecebido valorRecebido);
     }

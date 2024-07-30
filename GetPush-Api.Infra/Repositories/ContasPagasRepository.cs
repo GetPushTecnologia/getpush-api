@@ -58,12 +58,7 @@ namespace GetPush_Api.Infra.Repositories
                         {
                             id = item.id,
                             descricao = item.descricao,
-                            tipoContaPaga = new TipoContaPagaResult 
-                            { 
-                                id = tipoContaPaga != null ? tipoContaPaga.id : new Guid(),
-                                code = tipoContaPaga != null ? tipoContaPaga.code : 0,
-                                descricao = tipoContaPaga != null ? tipoContaPaga.descricao : string.Empty
-                            },
+                            tipoContaPaga = tipoContaPaga != null ? tipoContaPaga : new TipoContaPagaResult(),                            
                             data_pagamento = item.data_pagamento,
                             valor = item.valor,
                             usuario = new UsuarioResult { 

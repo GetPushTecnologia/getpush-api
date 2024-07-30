@@ -1,16 +1,18 @@
-﻿
+﻿using GetPush_Api.Domain.Commands.Interface;
 using GetPush_Api.Domain.Commands.Results;
 using GetPush_Api.Domain.Entities;
 using GetPush_Api.Domain.Repositories;
 
 namespace GetPush_Api.Domain.Commands.Handlers
 {    
-    public class ValorRecebidoCommandHandler
+    public class ValorRecebidoCommandHandler : IValorRecebidoCommandHandler
     {
         private readonly IValorRecebidoRepository _repository;
-        public ValorRecebidoCommandHandler(IValorRecebidoRepository repository)
+        private readonly ITipoValorRecebidoCommandHandler _tipoValorRecebidohandler;
+        public ValorRecebidoCommandHandler(IValorRecebidoRepository repository, ITipoValorRecebidoCommandHandler tipoValorRecebidohandler)
         {
             _repository = repository;
+            _tipoValorRecebidohandler = tipoValorRecebidohandler;
         }
 
         public async Task DeleteValorRecebido(Guid valorRecebidoId)
@@ -20,7 +22,8 @@ namespace GetPush_Api.Domain.Commands.Handlers
 
         public async Task<IEnumerable<ValorRecebidoResult>> GetValorRecebido(Usuario usuario)
         {
-            return await _repository.GetValorRecebido(usuario);
+            var tipoValorRecebidoList = await _tipoValorRecebidohandler.GetTipoValorRecebido();
+            return await _repository.GetValorRecebido(usuario, tipoValorRecebidoList);
         }
 
         public async Task InsertValorRecebido(ValorRecebido valorRecebido)

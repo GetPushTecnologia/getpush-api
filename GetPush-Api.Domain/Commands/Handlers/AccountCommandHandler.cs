@@ -1,9 +1,10 @@
-﻿using GetPush_Api.Domain.Commands.Results;
+﻿using GetPush_Api.Domain.Commands.Interface;
+using GetPush_Api.Domain.Commands.Results;
 using GetPush_Api.Domain.Repositories;
 
 namespace GetPush_Api.Domain.Commands.Handlers
 {
-    public class AccountCommandHandler
+    public class AccountCommandHandler : IAccountCommandHandler
     {
         private readonly IAccountRepository _repository;
 

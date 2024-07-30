@@ -1,11 +1,11 @@
-﻿
+﻿using GetPush_Api.Domain.Commands.Interface;
 using GetPush_Api.Domain.Commands.Results;
 using GetPush_Api.Domain.Entities;
 using GetPush_Api.Domain.Repositories;
 
 namespace GetPush_Api.Domain.Commands.Handlers
 {    
-    public class TipoValorRecebidoCommandHandler
+    public class TipoValorRecebidoCommandHandler : ITipoValorRecebidoCommandHandler
     {
         private readonly ITipoValorRecebidoRepository _repository;
 

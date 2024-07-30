@@ -1,4 +1,4 @@
-﻿using GetPush_Api.Domain.Commands.Handlers;
+﻿using GetPush_Api.Domain.Commands.Interface;
 using GetPush_Api.Domain.Entities;
 using GetPush_Api.Domain.Util;
 using Microsoft.AspNetCore.Authorization;
@@ -12,8 +12,9 @@ namespace GetPush_Api.Controllers
     [Route("v1")]
     public class ContasPagasController : BaseController
     {
-        private readonly ContasPagasCommandHandler _handler;
-        public ContasPagasController(ContasPagasCommandHandler handler)
+        private readonly IContasPagasCommandHandler _handler;
+                
+        public ContasPagasController(IContasPagasCommandHandler handler)
         {
             _handler = handler;
         }

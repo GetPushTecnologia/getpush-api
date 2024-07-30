@@ -6,14 +6,13 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using GetPush_Api.Shared;
 using System.Security.Principal;
-using GetPush_Api.Domain.Commands.Handlers;
 using Microsoft.IdentityModel.Tokens;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
-using System.Security.Cryptography;
 using System.Text;
 using GetPush_Api.Domain.Commands.Results;
+using GetPush_Api.Domain.Commands.Interface;
 
 
 namespace GetPush_Api.Controllers
@@ -21,8 +20,8 @@ namespace GetPush_Api.Controllers
     public class AccountController : ControllerBase
     {
         private UsuarioLoginResult _usuarioResult = new UsuarioLoginResult();
-        private readonly AccountCommandHandler _handler;
-        public AccountController(AccountCommandHandler handler)
+        private readonly IAccountCommandHandler _handler;
+        public AccountController(IAccountCommandHandler handler)
         {
             _handler = handler;
         }

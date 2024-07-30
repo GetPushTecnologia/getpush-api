@@ -1,13 +1,11 @@
 using GetPush_Api.Domain.Commands.Handlers;
+using GetPush_Api.Domain.Commands.Interface;
 using GetPush_Api.Domain.Commands.Results.map;
 using GetPush_Api.Domain.Repositories;
-using GetPush_Api.Domain.Services;
 using GetPush_Api.Domain.Util;
 using GetPush_Api.Infra.Repositories;
-using GetPush_Api.Infra.Services;
 using GetPush_Api.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-//using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -94,11 +92,11 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     });
 
     // Command Handler
-    services.AddTransient<AccountCommandHandler>();
-    services.AddTransient<ContasPagasCommandHandler>();
-    services.AddTransient<TipoContasPagasCommandHandler>();
-    services.AddTransient<ValorRecebidoCommandHandler>();
-    services.AddTransient<TipoValorRecebidoCommandHandler>();
+    services.AddTransient<IAccountCommandHandler, AccountCommandHandler>();
+    services.AddTransient<IContasPagasCommandHandler, ContasPagasCommandHandler>();
+    services.AddTransient<ITipoContasPagasCommandHandler, TipoContasPagasCommandHandler>();
+    services.AddTransient<IValorRecebidoCommandHandler, ValorRecebidoCommandHandler>();
+    services.AddTransient<ITipoValorRecebidoCommandHandler, TipoValorRecebidoCommandHandler>();
 
     // Repository
     services.AddTransient<IAccountRepository, AccountRepository>();

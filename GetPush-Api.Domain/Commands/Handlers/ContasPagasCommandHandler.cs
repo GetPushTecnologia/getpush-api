@@ -1,14 +1,15 @@
-﻿using GetPush_Api.Domain.Commands.Results;
+﻿using GetPush_Api.Domain.Commands.Interface;
+using GetPush_Api.Domain.Commands.Results;
 using GetPush_Api.Domain.Entities;
 using GetPush_Api.Domain.Repositories;
 
 namespace GetPush_Api.Domain.Commands.Handlers
 {
-    public class ContasPagasCommandHandler
+    public class ContasPagasCommandHandler : IContasPagasCommandHandler
     {
         private readonly IContasPagasRepository _repository;
-        private readonly TipoContasPagasCommandHandler _tipocontasPagashander;
-        public ContasPagasCommandHandler(IContasPagasRepository repository, TipoContasPagasCommandHandler tipocontasPagashander)
+        private readonly ITipoContasPagasCommandHandler _tipocontasPagashander;
+        public ContasPagasCommandHandler(IContasPagasRepository repository, ITipoContasPagasCommandHandler tipocontasPagashander)
         {
             _repository = repository;
             _tipocontasPagashander = tipocontasPagashander;
@@ -22,7 +23,7 @@ namespace GetPush_Api.Domain.Commands.Handlers
         public async Task<IEnumerable<ContasPagasResult>> GetContasPagas(Usuario usuario)
         {
             var tipoContaPagaList = await _tipocontasPagashander.GetTipoContaPaga();
-            return await _repository.GetContasPagas(usuario, (IEnumerable<TipoContaPagaResult>)tipoContaPagaList);
+            return await _repository.GetContasPagas(usuario, tipoContaPagaList);
         }
 
         public async Task InsertContasPagas(ContasPagas contasPagas)

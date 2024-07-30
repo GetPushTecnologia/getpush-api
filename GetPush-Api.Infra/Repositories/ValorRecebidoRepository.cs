@@ -23,7 +23,7 @@ namespace GetPush_Api.Infra.Repositories
             }
         }
 
-        public async Task<IEnumerable<ValorRecebidoResult>> GetValorRecebido(Usuario usuario)
+        public async Task<IEnumerable<ValorRecebidoResult>> GetValorRecebido(Usuario usuario, IEnumerable<TipoValorRecebidoResult> tipoValorRecebidoList)
         {
             var query = @"select vr.id,
 							     vr.descricao,
@@ -38,7 +38,7 @@ namespace GetPush_Api.Infra.Repositories
                                  uc.nome as nomeCadastro
 						    from valorRecebido vr
                       inner join usuario u on u.id = vr.usuario_id
-                      inner join usuario uc on u.id = vr.usuario_id_cadastro
+                      inner join usuario uc on uc.id = vr.usuario_id_cadastro
                            where usuario_id = @Usuario_id";
 
             using (var conn = new SqlConnection(Runtime.ConnectionString))
@@ -52,12 +52,14 @@ namespace GetPush_Api.Infra.Repositories
                 {
                     foreach (var item in result)
                     {
+                        var tipoValorRecebido = tipoValorRecebidoList.Where(x => x.code == item.tipoValorRecebido_code).FirstOrDefault();
+
                         contasPagarList.Add(new ValorRecebidoResult
                         {
                             id = item.id,
                             descricao = item.descricao,
-                            tipoValorRecebido = new TipoValorRecebidoResult { code = item.tipoValorRecebido_code },
-                            data_recebimento = item.data_pagamento,
+                            tipoValorRecebido = tipoValorRecebido != null ? tipoValorRecebido : new TipoValorRecebidoResult(),
+                            data_recebimento = item.data_recebimento,
                             valor = item.valor,
                             usuario = new UsuarioResult
                             {
