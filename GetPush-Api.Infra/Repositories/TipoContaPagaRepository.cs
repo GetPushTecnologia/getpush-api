@@ -14,7 +14,7 @@ namespace GetPush_Api.Infra.Repositories
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
                 var query = @"delete 
-                                from tipoContasPagas 
+                                from TipoContaPaga 
                                where id = @Id";
 
                 var parameters = new { Id = contasPagasId };
@@ -32,8 +32,8 @@ namespace GetPush_Api.Infra.Repositories
                                  tcp.data_alterado,
                                  tcp.usuario_id_cadastro,
                                  u.nome
-						    from tipoContasPagas tcp
-                           inner join usuario u on u.id = tcp.usuario_id_cadastro";
+						    from TipoContaPaga tcp
+                           inner join Usuario u on u.id = tcp.usuario_id_cadastro";
 
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
@@ -72,7 +72,7 @@ namespace GetPush_Api.Infra.Repositories
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
                 var query = @"insert 
-                                into contasPagas 
+                                into TipoContaPaga 
                                     (id,
                                      code,
                                      descricao,
@@ -103,7 +103,7 @@ namespace GetPush_Api.Infra.Repositories
         {
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
-                var query = @"update tipoContasPagas 
+                var query = @"update TipoContaPaga 
                                  set code = @Code,
                                      descricao = @Descricao,
                                      data_alterado = @Data_alterado,

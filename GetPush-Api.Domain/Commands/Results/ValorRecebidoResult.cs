@@ -13,7 +13,7 @@
         public Guid id { get; set; } 
         public string descricao { get; set; }
         public TipoValorRecebidoResult tipoValorRecebido { get; set; }
-        public decimal valor { get; set; }
+        public decimal valor_recebido { get; set; }
         public DateTime data_recebimento { get; set; }
         public UsuarioResult usuario { get; set; }
         public DateTime data_cadastro { get; set; }

@@ -93,14 +93,14 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 
     // Command Handler
     services.AddTransient<IAccountCommandHandler, AccountCommandHandler>();
-    services.AddTransient<IContasPagasCommandHandler, ContasPagasCommandHandler>();
-    services.AddTransient<ITipoContasPagasCommandHandler, TipoContasPagasCommandHandler>();
+    services.AddTransient<IContaPagaCommandHandler, ContaPagaCommandHandler>();
+    services.AddTransient<ITipoContaPagaCommandHandler, TipoContaPagaCommandHandler>();
     services.AddTransient<IValorRecebidoCommandHandler, ValorRecebidoCommandHandler>();
     services.AddTransient<ITipoValorRecebidoCommandHandler, TipoValorRecebidoCommandHandler>();
 
     // Repository
     services.AddTransient<IAccountRepository, AccountRepository>();
-    services.AddTransient<IContasPagasRepository, ContasPagasRepository>();
+    services.AddTransient<IContaPagaRepository, ContaPagaRepository>();
     services.AddTransient<ITipoContaPagaRepository, TipoContaPagaRepository>();
     services.AddTransient<IValorRecebidoRepository, ValorRecebidoRepository>();
     services.AddTransient<ITipoValorRecebidoRepository, TipoValorRecebidoRepository>();

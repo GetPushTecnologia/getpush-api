@@ -14,7 +14,7 @@ namespace GetPush_Api.Infra.Repositories
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
                 var query = @"delete 
-                                from valorRecebido 
+                                from ValorRecebido 
                                where id = @Id";
 
                 var parameters = new { Id = valorRecebidoId };
@@ -29,16 +29,16 @@ namespace GetPush_Api.Infra.Repositories
 							     vr.descricao,
 							     vr.tipoValorRecebido_code,
 							     vr.data_recebimento,
-							     vr.valor,
+							     vr.valor_recebido,
 							     vr.usuario_id,
                                  u.nome,
 							     vr.data_cadastro,
 							     vr.data_alterado,
 							     vr.usuario_id_cadastro,
                                  uc.nome as nomeCadastro
-						    from valorRecebido vr
-                      inner join usuario u on u.id = vr.usuario_id
-                      inner join usuario uc on uc.id = vr.usuario_id_cadastro
+						    from ValorRecebido vr
+                      inner join Usuario u on u.id = vr.usuario_id
+                      inner join Usuario uc on uc.id = vr.usuario_id_cadastro
                            where usuario_id = @Usuario_id";
 
             using (var conn = new SqlConnection(Runtime.ConnectionString))
@@ -60,7 +60,7 @@ namespace GetPush_Api.Infra.Repositories
                             descricao = item.descricao,
                             tipoValorRecebido = tipoValorRecebido != null ? tipoValorRecebido : new TipoValorRecebidoResult(),
                             data_recebimento = item.data_recebimento,
-                            valor = item.valor,
+                            valor_recebido = item.valor_recebido,
                             usuario = new UsuarioResult
                             {
                                 id = item.usuario_id,
@@ -88,7 +88,7 @@ namespace GetPush_Api.Infra.Repositories
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
                 var query = @"insert 
-                                into valorRecebido 
+                                into ValorRecebido 
                                     (id,
                                      descricao,
                                      tipoValorRecebido_code,
@@ -128,7 +128,7 @@ namespace GetPush_Api.Infra.Repositories
         {
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
-                var query = @"update valorRecebido 
+                var query = @"update ValorRecebido 
                                  set descricao = @Descricao,
 	                                 tipoValorRecebido_code = @TipoValorRecebido_code,
 	                                 data_recebimento = @Data_recebimento,
@@ -141,7 +141,7 @@ namespace GetPush_Api.Infra.Repositories
                 {
                     Id = valorRecebido.id,
                     Descricao = valorRecebido.descricao,
-                    TipoContasPagar_code = valorRecebido.tipoValorRecebido.code,
+                    TipoValorRecebido = valorRecebido.tipoValorRecebido.code,
                     Data_pagamento = valorRecebido.data_recebimento,
                     Valor = valorRecebido.valor,
                     Data_alterado = valorRecebido.data_alterado,

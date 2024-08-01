@@ -5,11 +5,11 @@ using GetPush_Api.Domain.Repositories;
 
 namespace GetPush_Api.Domain.Commands.Handlers
 {
-    public class TipoContasPagasCommandHandler : ITipoContasPagasCommandHandler
+    public class TipoContaPagaCommandHandler : ITipoContaPagaCommandHandler
     {
         private readonly ITipoContaPagaRepository _repository;
 
-        public TipoContasPagasCommandHandler(ITipoContaPagaRepository repository)
+        public TipoContaPagaCommandHandler(ITipoContaPagaRepository repository)
         {
             _repository = repository;
         }

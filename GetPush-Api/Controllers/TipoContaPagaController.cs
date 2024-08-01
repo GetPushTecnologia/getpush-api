@@ -10,11 +10,11 @@ namespace GetPush_Api.Controllers
 {
     [ApiController]
     [Route("v1")]
-    public class TipoContasPagasController : BaseController
+    public class TipoContaPagaController : BaseController
     {
-        private readonly ITipoContasPagasCommandHandler _handler;
+        private readonly ITipoContaPagaCommandHandler _handler;
 
-        public TipoContasPagasController(ITipoContasPagasCommandHandler handler)
+        public TipoContaPagaController(ITipoContaPagaCommandHandler handler)
         {
             _handler = handler;
         }

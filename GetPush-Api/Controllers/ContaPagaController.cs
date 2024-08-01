@@ -10,11 +10,11 @@ namespace GetPush_Api.Controllers
 {
     [ApiController]
     [Route("v1")]
-    public class ContasPagasController : BaseController
+    public class ContaPagaController : BaseController
     {
-        private readonly IContasPagasCommandHandler _handler;
+        private readonly IContaPagaCommandHandler _handler;
                 
-        public ContasPagasController(IContasPagasCommandHandler handler)
+        public ContaPagaController(IContaPagaCommandHandler handler)
         {
             _handler = handler;
         }
@@ -26,15 +26,15 @@ namespace GetPush_Api.Controllers
         }
                 
         [HttpGet]
-        [Route(nameof(GetContasPagas))]
+        [Route(nameof(GetContaPaga))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [SwaggerOperation(Summary = "Contas pagas", Description = "Buscar lista de contas pagas")]
         [Authorize]
-        public async Task<IActionResult> GetContasPagas()
+        public async Task<IActionResult> GetContaPaga()
         {
             try
             {
-                var contasPagas = await _handler.GetContasPagas(
+                var contasPagas = await _handler.GetContaPaga(
                     new Usuario { id = UsuarioId() }
                     );
 
@@ -49,11 +49,11 @@ namespace GetPush_Api.Controllers
         }
 
         [HttpPost]
-        [Route(nameof(InsertContasPagas))]
+        [Route(nameof(InsertContaPaga))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [SwaggerOperation(Summary = "Contas a pagar", Description = "Inserir conta paga")]
         [Authorize]
-        public async Task<IActionResult> InsertContasPagas([FromBody] ContasPagas contasPagas)
+        public async Task<IActionResult> InsertContaPaga([FromBody] ContaPaga contasPagas)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace GetPush_Api.Controllers
                 contasPagas.usuarioCadastro = new Usuario { id = usuarioId };
                 contasPagas.AtualizaDataBrasil(new Utilidades());
 
-                await _handler.InsertContasPagas(contasPagas);
+                await _handler.InsertContaPaga(contasPagas);
 
                 return ApiResponse(true, "Gravação realizada com sucesso");
             }
@@ -73,11 +73,11 @@ namespace GetPush_Api.Controllers
         }
 
         [HttpPut]
-        [Route(nameof(UpdateContasPagas))]
+        [Route(nameof(UpdateContaPaga))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [SwaggerOperation(Summary = "Contas a pagar", Description = "Atualizar conta paga")]
         [Authorize]
-        public async Task<IActionResult> UpdateContasPagas([FromBody] ContasPagas contasPagas)
+        public async Task<IActionResult> UpdateContaPaga([FromBody] ContaPaga contasPagas)
         {
             try
             {
@@ -85,7 +85,7 @@ namespace GetPush_Api.Controllers
                 contasPagas.usuarioCadastro = new Usuario { id = usuarioId };
                 contasPagas.AtualizaDataBrasil(new Utilidades());
 
-                await _handler.UpdateContasPagas(contasPagas);
+                await _handler.UpdateContaPaga(contasPagas);
 
                 return ApiResponse(true, "Atualização realizada com sucesso");
             }
@@ -96,15 +96,15 @@ namespace GetPush_Api.Controllers
         }
 
         [HttpDelete]
-        [Route(nameof(DeleteContasPagas) + "/{contaPagaId}")]
+        [Route(nameof(DeleteContaPaga) + "/{contaPagaId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [SwaggerOperation(Summary = "Contas a pagar", Description = "Exclusão conta paga")]
         [Authorize]
-        public async Task<IActionResult> DeleteContasPagas(Guid contaPagaId)
+        public async Task<IActionResult> DeleteContaPaga(Guid contaPagaId)
         {
             try
             {   
-                await _handler.DeleteContasPagas(contaPagaId);
+                await _handler.DeleteContaPaga(contaPagaId);
 
                 return ApiResponse(true, "Exclusão realizada com sucesso");
             }
