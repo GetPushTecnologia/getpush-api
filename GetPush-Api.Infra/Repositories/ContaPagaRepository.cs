@@ -58,16 +58,18 @@ namespace GetPush_Api.Infra.Repositories
                         {
                             id = item.id,
                             descricao = item.descricao,
-                            tipoContaPaga = tipoContaPaga != null ? tipoContaPaga : new TipoContaPagaResult(),                            
+                            tipoContaPaga = tipoContaPaga != null ? tipoContaPaga : new TipoContaPagaResult(),
                             data_pagamento = item.data_pagamento,
                             valor_pago = item.valor_pago,
-                            usuario = new UsuarioResult { 
+                            usuario = new UsuarioResult
+                            {
                                 id = item.usuario_id,
                                 nome = item.nome
                             },
                             data_cadastro = item.data_cadastro,
                             data_alterado = item.data_alterado,
-                            usuarioCadastro = new UsuarioResult { 
+                            usuarioCadastro = new UsuarioResult
+                            {
                                 id = item.usuario_id_cadastro,
                                 nome = item.nomeCadastro
                             }
@@ -147,6 +149,23 @@ namespace GetPush_Api.Infra.Repositories
                 };
 
                 await conn.ExecuteAsync(query, parameters);
+            }
+        }
+
+        public async Task<IEnumerable<TotalContaPagaDiaResult>> GetContaPagaTotalDia(Usuario usuario)
+        {
+            var query = @"select convert(varchar(10), data_pagamento, 103) as dataPagamento,
+	                             sum(valor_pago) as totalContaPaga
+                            from ContaPaga
+                           where usuario_id = @Usuario_id
+                           group by convert(varchar(10), data_pagamento, 103)
+                           order by convert(varchar(10), data_pagamento, 103)";
+
+            using(var conn = new SqlConnection(Runtime.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                return await conn.QueryAsync<TotalContaPagaDiaResult>(query, new { Usuario_id = usuario.id });
             }
         }
     }

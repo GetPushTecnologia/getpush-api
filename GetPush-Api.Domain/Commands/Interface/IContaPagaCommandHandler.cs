@@ -9,5 +9,6 @@ namespace GetPush_Api.Domain.Commands.Interface
         Task<IEnumerable<ContaPagaResult>> GetContaPaga(Usuario usuario);
         Task InsertContaPaga(ContaPaga contasPagas);
         Task UpdateContaPaga(ContaPaga contasPagas);
+        Task<IEnumerable<TotalContaPagaDiaResult>> GetContaPagaTotalDia(Usuario usuario);
     }
 }

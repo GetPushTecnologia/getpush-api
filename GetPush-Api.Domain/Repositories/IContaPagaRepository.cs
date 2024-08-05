@@ -9,5 +9,6 @@ namespace GetPush_Api.Domain.Repositories
         Task InsertContaPaga(ContaPaga contasPagas);
         Task UpdateContaPaga(ContaPaga contasPagas);
         Task DeleteContaPaga(Guid contasPagasId);
+        Task<IEnumerable<TotalContaPagaDiaResult>> GetContaPagaTotalDia(Usuario usuario);
     }
 }

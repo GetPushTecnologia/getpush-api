@@ -5,6 +5,6 @@ namespace GetPush_Api.Domain.Repositories
 {
     public interface IGraficoRepository
     {
-        Task<DadosGraficoResult> GetDadosGrafico(Usuario usuario);
+        Task<DadosGraficoResult> GetDadosGraficoResumido(Usuario usuario);
     }
 }

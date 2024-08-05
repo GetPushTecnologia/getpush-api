@@ -5,6 +5,7 @@ namespace GetPush_Api.Domain.Commands.Interface
 {
     public interface IGraficoCommanddHandler
     {
-        Task<DadosGraficoResult> GetDadosGrafico(Usuario usuario);
+        Task<DadosGraficoResult> GetDadosGraficoResumido(Usuario usuario);
+        Task<DadosGraficoLinhaTempoResult> GetDadosGraficoLinhaTempo(Usuario usuario);
     }
 }

@@ -113,5 +113,28 @@ namespace GetPush_Api.Controllers
                 return ErrorResponse($"Erro: {ex.Message}");
             }
         }
+
+        [HttpGet]
+        [Route(nameof(GetContaPagaTotalDia))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [SwaggerOperation(Summary = "Contas pagas", Description = "Buscar lista de contas pagas com total por dia")]
+        [Authorize]
+        public async Task<IActionResult> GetContaPagaTotalDia()
+        {
+            try
+            {
+                var contasPagas = await _handler.GetContaPagaTotalDia(
+                    new Usuario { id = UsuarioId() }
+                    );
+
+                var msg = contasPagas.Count() > 0 ? "Dados recuperados com sucesso" : "Não retornou dados.";
+
+                return ApiResponse(true, msg, contasPagas);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse($"Erro: {ex.Message}");
+            }
+        }
     }
 }

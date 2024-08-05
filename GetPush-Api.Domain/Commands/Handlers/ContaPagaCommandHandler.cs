@@ -35,5 +35,10 @@ namespace GetPush_Api.Domain.Commands.Handlers
         {
             await _repository.UpdateContaPaga(contasPagas);
         }
+
+        public async Task<IEnumerable<TotalContaPagaDiaResult>> GetContaPagaTotalDia(Usuario usuario)
+        {
+            return await _repository.GetContaPagaTotalDia(usuario);
+        }
     }
 }

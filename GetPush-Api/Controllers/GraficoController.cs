@@ -25,21 +25,44 @@ namespace GetPush_Api.Controllers
         }
 
         [HttpGet]
-        [Route(nameof(GetDadosGrafico))]
+        [Route(nameof(GetDadosGraficoResumido))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [SwaggerOperation(Summary = "Dados Grafico", Description = "Buscar dados para atualizaro o grafico")]
         [Authorize]
-        public async Task<IActionResult> GetDadosGrafico()
+        public async Task<IActionResult> GetDadosGraficoResumido()
         {
             try
             {
-                var dadosGrafico = await _handler.GetDadosGrafico(
+                var dadosGrafico = await _handler.GetDadosGraficoResumido(
                     new Usuario { id = UsuarioId() }
                     );
 
                 var msg = dadosGrafico != null ? "Dados recuperados com sucesso" : "Não retornou dados.";
 
-                return ApiResponse(true, msg, dadosGrafico);
+                return ApiResponse(true, msg, dadosGrafico ?? new object());
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse($"Erro: {ex.Message}");
+            }
+        }
+
+        [HttpGet]
+        [Route(nameof(GetDadosGraficoLinhaTempo))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [SwaggerOperation(Summary = "Dados Grafico", Description = "Buscar dados para atualizaro o grafico")]
+        [Authorize]
+        public async Task<IActionResult> GetDadosGraficoLinhaTempo()
+        {
+            try
+            {
+                var dadosGrafico = await _handler.GetDadosGraficoLinhaTempo(
+                    new Usuario { id = UsuarioId() }
+                    );
+
+                var msg = dadosGrafico != null ? "Dados recuperados com sucesso" : "Não retornou dados.";
+
+                return ApiResponse(true, msg, dadosGrafico ?? new object());
             }
             catch (Exception ex)
             {
