@@ -1,7 +1,4 @@
-﻿using GetPush_Api.Domain.Entities;
-using System;
-
-namespace GetPush_Api.Domain.Commands.Results
+﻿namespace GetPush_Api.Domain.Commands.Results
 {
     public class ContaPagaResult
     {

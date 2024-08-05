@@ -97,6 +97,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     services.AddTransient<ITipoContaPagaCommandHandler, TipoContaPagaCommandHandler>();
     services.AddTransient<IValorRecebidoCommandHandler, ValorRecebidoCommandHandler>();
     services.AddTransient<ITipoValorRecebidoCommandHandler, TipoValorRecebidoCommandHandler>();
+    services.AddTransient<IGraficoCommanddHandler, GraficoCommanddHandler>();
 
     // Repository
     services.AddTransient<IAccountRepository, AccountRepository>();
@@ -104,6 +105,8 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     services.AddTransient<ITipoContaPagaRepository, TipoContaPagaRepository>();
     services.AddTransient<IValorRecebidoRepository, ValorRecebidoRepository>();
     services.AddTransient<ITipoValorRecebidoRepository, TipoValorRecebidoRepository>();
+    services.AddTransient<IGraficoRepository, GraficoRepository>();
+
     // Map
     services.AddTransient<UsuarioMap>();
 
