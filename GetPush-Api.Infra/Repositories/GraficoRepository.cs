@@ -38,5 +38,37 @@ namespace GetPush_Api.Infra.Repositories
 
             return new DadosGraficoResult();
         }
+
+        public async Task<IEnumerable<LinhaTempoContaPaga>> GetLinhaTempoContaPaga(Usuario usuario)
+        {
+            var query = @"select cast(data_pagamento as Date) as dataPagamento,
+	                             sum(valor_pago) as totalContaPaga
+                            from ContaPaga
+                           where usuario_id = @Id
+                           group by cast(data_pagamento as date)
+                           order by cast(data_pagamento as date)";
+
+            using (var conn = new SqlConnection(Runtime.ConnectionString))
+            {
+                await conn.OpenAsync();
+                return await conn.QueryAsync<LinhaTempoContaPaga>(query, new { Id = usuario.id });
+            }
+        }
+
+        public async Task<IEnumerable<LinhaTempoValorRecebido>> GetLinhaTempoValorRecebido(Usuario usuario)
+        {
+            var query = @"select cast(data_pagamento as Date) as dataPagamento,
+	                             sum(valor_pago) as totalContaPaga
+                            from ContaPaga
+                           where usuario_id = @Id
+                           group by cast(data_pagamento as date)
+                           order by cast(data_pagamento as date)";
+
+            using (var conn = new SqlConnection(Runtime.ConnectionString))
+            {
+                await conn.OpenAsync();
+                return await conn.QueryAsync<LinhaTempoValorRecebido>(query, new { Id = usuario.id });
+            }
+        }
     }
 }

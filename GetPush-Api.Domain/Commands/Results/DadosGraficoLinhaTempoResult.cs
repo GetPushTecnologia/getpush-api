@@ -4,13 +4,23 @@
     {
         public DadosGraficoLinhaTempoResult()
         {
-            usuario = new UsuarioResult();
-            contaPaga = new List<ContaPagaResult>();
-            valorRecebido  = new List<ValorRecebidoResult>();
+            linhaTempoContaPagas = new List<LinhaTempoContaPaga>();
+            linhaTempoValorRecebido = new List<LinhaTempoValorRecebido>();
         }
 
-        public UsuarioResult usuario { get; set; }
-        public IEnumerable<ContaPagaResult> contaPaga { get; set; }
-        public IEnumerable<ValorRecebidoResult> valorRecebido { get; set; }
+        public IEnumerable<LinhaTempoContaPaga> linhaTempoContaPagas { get; set; }
+        public IEnumerable<LinhaTempoValorRecebido> linhaTempoValorRecebido { get; set; }
+    }
+
+    public class LinhaTempoContaPaga
+    {
+        public DateTime dataPagamento { get; set; }
+        public decimal totalContaPaga { get; set; }
+    }
+
+    public class LinhaTempoValorRecebido
+    {
+        public DateTime dataRecebimento { get; set; }
+        public decimal totalValorRecebido { get; set; }
     }
 }

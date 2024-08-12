@@ -18,27 +18,21 @@ namespace GetPush_Api.Domain.Commands.Handlers
             _valorRecebidoHandler = valorRecebidoHandler;
         }
 
-        public Task<DadosGraficoResult> GetDadosGraficoResumido(Usuario usuario)
+        public async Task<DadosGraficoResult> GetDadosGraficoResumido(Usuario usuario)
         {
-            return _repository.GetDadosGraficoResumido(usuario);
+            return await _repository.GetDadosGraficoResumido(usuario);
         }
 
         public async Task<DadosGraficoLinhaTempoResult> GetDadosGraficoLinhaTempo(Usuario usuario)
         {
-            if (usuario != null)
+            var contaPaga = await _repository.GetLinhaTempoContaPaga(usuario);
+            var valorRecebido = await _repository.GetLinhaTempoValorRecebido(usuario);
+
+            return new DadosGraficoLinhaTempoResult
             {
-                var contaPaga = await _contaPagaHandler.GetContaPaga(usuario);
-                var valorRecebido = await _valorRecebidoHandler.GetValorRecebido(usuario);
-
-                return new DadosGraficoLinhaTempoResult
-                {
-                    usuario = new UsuarioResult { id = usuario?.id ?? Guid.Empty },
-                    contaPaga = contaPaga,
-                    valorRecebido = valorRecebido
-                };
-            }
-
-            return new DadosGraficoLinhaTempoResult();
+                linhaTempoContaPagas = contaPaga,
+                linhaTempoValorRecebido = valorRecebido
+            };
         }
     }
 }
