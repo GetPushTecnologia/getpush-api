@@ -30,7 +30,7 @@ namespace GetPush_Api.Domain.Commands.Handlers
 
             return new DadosGraficoLinhaTempoResult
             {
-                linhaTempoContaPagas = contaPaga,
+                linhaTempoContaPaga = contaPaga,
                 linhaTempoValorRecebido = valorRecebido
             };
         }

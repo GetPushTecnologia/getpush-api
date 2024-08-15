@@ -57,12 +57,12 @@ namespace GetPush_Api.Infra.Repositories
 
         public async Task<IEnumerable<LinhaTempoValorRecebido>> GetLinhaTempoValorRecebido(Usuario usuario)
         {
-            var query = @"select cast(data_pagamento as Date) as dataPagamento,
-	                             sum(valor_pago) as totalContaPaga
-                            from ContaPaga
-                           where usuario_id = @Id
-                           group by cast(data_pagamento as date)
-                           order by cast(data_pagamento as date)";
+            var query = @"select cast(data_recebimento as Date) dataRecebimento,
+	                             sum(valor_recebido) as totalValorRecebido
+                            from ValorRecebido
+                           where usuario_id = '71B28FB7-D2A3-43EB-A6B5-1C0C714C0D6A'
+                           group by cast(data_recebimento as date)
+                           order by cast(data_recebimento as date)";
 
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {

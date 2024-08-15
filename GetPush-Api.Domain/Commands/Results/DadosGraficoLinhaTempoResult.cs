@@ -4,11 +4,11 @@
     {
         public DadosGraficoLinhaTempoResult()
         {
-            linhaTempoContaPagas = new List<LinhaTempoContaPaga>();
+            linhaTempoContaPaga = new List<LinhaTempoContaPaga>();
             linhaTempoValorRecebido = new List<LinhaTempoValorRecebido>();
         }
 
-        public IEnumerable<LinhaTempoContaPaga> linhaTempoContaPagas { get; set; }
+        public IEnumerable<LinhaTempoContaPaga> linhaTempoContaPaga { get; set; }
         public IEnumerable<LinhaTempoValorRecebido> linhaTempoValorRecebido { get; set; }
     }
 
