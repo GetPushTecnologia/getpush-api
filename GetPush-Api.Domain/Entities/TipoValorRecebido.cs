@@ -14,9 +14,9 @@ namespace GetPush_Api.Domain.Entities
         public Guid? id { get; set; }
         public int code { get; set; }
         public string descricao { get; set; }
-        public DateTime data_cadastro { get; set; }
-        public DateTime data_alterado { get; set; }
-        public Usuario usuarioCadastro { get; set; }
+        public DateTime? data_cadastro { get; set; }
+        public DateTime? data_alterado { get; set; }
+        public Usuario? usuarioCadastro { get; set; }
 
         public void AtualizaDataBrasil(Utilidades utils)
         {

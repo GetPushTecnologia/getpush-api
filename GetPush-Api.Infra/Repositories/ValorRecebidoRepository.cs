@@ -52,7 +52,7 @@ namespace GetPush_Api.Infra.Repositories
                 {
                     foreach (var item in result)
                     {
-                        var tipoValorRecebido = tipoValorRecebidoList.Where(x => x.code == item.tipoValorRecebido_code).FirstOrDefault();
+                        var tipoValorRecebido = tipoValorRecebidoList.FirstOrDefault(x => x.code == item.tipoValorRecebido_code);
 
                         contasPagarList.Add(new ValorRecebidoResult
                         {
@@ -92,8 +92,8 @@ namespace GetPush_Api.Infra.Repositories
                                     (id,
                                      descricao,
                                      tipoValorRecebido_code,
+                                     valor_recebido,
                                      data_recebimento,
-                                     valor,
                                      usuario_id,
                                      data_cadastro,
                                      data_alterado,
@@ -101,8 +101,8 @@ namespace GetPush_Api.Infra.Repositories
                              values (newid(),
                                      @Descricao,
 	                                 @TipoValorRecebido_code,
+                                     @Valor_recebido,
 	                                 @Data_recebimento,
-	                                 @Valor,
 	                                 @Usuario_id,
 	                                 @Data_cadastro,
 	                                 @Data_alterado,
@@ -113,11 +113,11 @@ namespace GetPush_Api.Infra.Repositories
                     Descricao = valorRecebido.descricao,
                     TipoValorRecebido_code = valorRecebido.tipoValorRecebido.code,
                     Data_recebimento = valorRecebido.data_recebimento,
-                    Valor = valorRecebido.valor,
-                    Usuario_id = valorRecebido.usuario.id,
+                    Valor_recebido = valorRecebido.valor,
+                    Usuario_id = valorRecebido.usuario?.id,
                     Data_cadastro = valorRecebido.data_cadastro,
                     Data_alterado = valorRecebido.data_alterado,
-                    Usuario_id_cadastro = valorRecebido.usuarioCadastro.id
+                    Usuario_id_cadastro = valorRecebido.usuarioCadastro?.id
                 };
 
                 await conn.ExecuteAsync(query, parameters);
@@ -132,7 +132,7 @@ namespace GetPush_Api.Infra.Repositories
                                  set descricao = @Descricao,
 	                                 tipoValorRecebido_code = @TipoValorRecebido_code,
 	                                 data_recebimento = @Data_recebimento,
-	                                 valor = @Valor,
+	                                 valor_recebido = @Valor_recebido,
 	                                 data_alterado = @Data_alterado,
 	                                 usuario_id_cadastro = @Usuario_id_cadastro
                                where id = @Id";
@@ -141,11 +141,11 @@ namespace GetPush_Api.Infra.Repositories
                 {
                     Id = valorRecebido.id,
                     Descricao = valorRecebido.descricao,
-                    TipoValorRecebido = valorRecebido.tipoValorRecebido.code,
-                    Data_pagamento = valorRecebido.data_recebimento,
-                    Valor = valorRecebido.valor,
+                    tipoValorRecebido_code = valorRecebido.tipoValorRecebido.code,
+                    Data_recebimento = valorRecebido.data_recebimento,
+                    Valor_recebido = valorRecebido.valor,
                     Data_alterado = valorRecebido.data_alterado,
-                    Usuario_id_cadastro = valorRecebido.usuarioCadastro.id
+                    Usuario_id_cadastro = valorRecebido.usuarioCadastro?.id
                 };
 
                 await conn.ExecuteAsync(query, parameters);
