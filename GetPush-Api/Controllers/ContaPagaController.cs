@@ -34,11 +34,9 @@ namespace GetPush_Api.Controllers
         {
             try
             {
-                var contasPagas = await _handler.GetContaPaga(
-                    new Usuario { id = UsuarioId() }
-                    );
+                var contasPagas = await _handler.GetContaPaga(new Usuario { id = UsuarioId() });
 
-                var msg = contasPagas.Count() > 0 ? "Dados recuperados com sucesso" : "Não retornou dados.";
+                var msg = contasPagas.Any() ? "Dados recuperados com sucesso" : "Não retornou dados.";
 
                 return ApiResponse(true, msg, contasPagas);
             }
@@ -56,11 +54,8 @@ namespace GetPush_Api.Controllers
         public async Task<IActionResult> InsertContaPaga([FromBody] ContaPaga contasPagas)
         {
             try
-            {
-                var usuarioId = UsuarioId();
-                contasPagas.usuario = new Usuario { id = usuarioId };
-                contasPagas.usuarioCadastro = new Usuario { id = usuarioId };
-                contasPagas.AtualizaDataBrasil(new Utilidades());
+            {   
+                contasPagas.AtualizaDataBrasil(new Utilidades(), UsuarioId());
 
                 await _handler.InsertContaPaga(contasPagas);
 
@@ -80,10 +75,8 @@ namespace GetPush_Api.Controllers
         public async Task<IActionResult> UpdateContaPaga([FromBody] ContaPaga contasPagas)
         {
             try
-            {
-                var usuarioId = UsuarioId();
-                contasPagas.usuarioCadastro = new Usuario { id = usuarioId };
-                contasPagas.AtualizaDataBrasil(new Utilidades());
+            {   
+                contasPagas.AtualizaDataBrasil(new Utilidades(), UsuarioId());
 
                 await _handler.UpdateContaPaga(contasPagas);
 
@@ -123,11 +116,9 @@ namespace GetPush_Api.Controllers
         {
             try
             {
-                var contasPagas = await _handler.GetContaPagaTotalDia(
-                    new Usuario { id = UsuarioId() }
-                    );
+                var contasPagas = await _handler.GetContaPagaTotalDia(new Usuario { id = UsuarioId() });
 
-                var msg = contasPagas.Count() > 0 ? "Dados recuperados com sucesso" : "Não retornou dados.";
+                var msg = contasPagas.Any() ? "Dados recuperados com sucesso" : "Não retornou dados.";
 
                 return ApiResponse(true, msg, contasPagas);
             }

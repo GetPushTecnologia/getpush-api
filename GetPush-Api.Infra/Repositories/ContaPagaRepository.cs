@@ -39,7 +39,8 @@ namespace GetPush_Api.Infra.Repositories
 						    from ContaPaga cp
                       inner join Usuario u on u.id = cp.usuario_id
                       inner join Usuario uc on uc.id = cp.usuario_id_cadastro
-                           where usuario_id = @Usuario_id";
+                           where usuario_id = @Usuario_id
+                        order by cp.data_cadastro desc";
 
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
@@ -52,7 +53,7 @@ namespace GetPush_Api.Infra.Repositories
                 {
                     foreach (var item in result)
                     {
-                        var tipoContaPaga = tipoContaPagaList.Where(x => x.code == item.tipoContaPaga_code).FirstOrDefault();
+                        var tipoContaPaga = tipoContaPagaList.FirstOrDefault(x => x.code == item.tipoContaPaga_code);
 
                         contasPagarList.Add(new ContaPagaResult
                         {
@@ -93,7 +94,7 @@ namespace GetPush_Api.Infra.Repositories
 	                                 descricao,
 	                                 tipoContaPaga_code,
 	                                 data_pagamento,
-	                                 valor,
+	                                 valor_pago,
 	                                 usuario_id,
 	                                 data_cadastro,
 	                                 data_alterado,
@@ -102,7 +103,7 @@ namespace GetPush_Api.Infra.Repositories
                                      @Descricao,
 	                                 @TipoContaPaga_code,
 	                                 @Data_pagamento,
-	                                 @Valor,
+	                                 @Valor_pago,
 	                                 @Usuario_id,
 	                                 @Data_cadastro,
 	                                 @Data_alterado,
@@ -113,11 +114,11 @@ namespace GetPush_Api.Infra.Repositories
                     Descricao = contasPagas.descricao,
                     tipoContaPaga_code = contasPagas.tipoContaPaga.code,
                     Data_pagamento = contasPagas.data_pagamento,
-                    Valor = contasPagas.valor,
+                    Valor_pago = contasPagas.valor,
                     Usuario_id = contasPagas.usuario.id,
                     Data_cadastro = contasPagas.data_cadastro,
                     Data_alterado = contasPagas.data_alterado,
-                    Usuario_id_cadastro = contasPagas.usuarioCadastro.id
+                    Usuario_id_cadastro = contasPagas.usuarioCadastro?.id
                 };
 
                 await conn.ExecuteAsync(query, parameters);
@@ -132,7 +133,7 @@ namespace GetPush_Api.Infra.Repositories
                                  set descricao = @Descricao,
 	                                 tipoContaPaga_code = @TipoContaPaga_code,
 	                                 data_pagamento = @Data_pagamento,
-	                                 valor = @Valor,
+	                                 valor_pago = @Valor_pago,
 	                                 data_alterado = @Data_alterado,
 	                                 usuario_id_cadastro = @Usuario_id_cadastro
                                where id = @Id";
@@ -143,9 +144,9 @@ namespace GetPush_Api.Infra.Repositories
                     Descricao = contasPagas.descricao,
                     tipoContaPaga_code = contasPagas.tipoContaPaga.code,
                     Data_pagamento = contasPagas.data_pagamento,
-                    Valor = contasPagas.valor,
+                    Valor_pago = contasPagas.valor,
                     Data_alterado = contasPagas.data_alterado,
-                    Usuario_id_cadastro = contasPagas.usuarioCadastro.id
+                    Usuario_id_cadastro = contasPagas.usuarioCadastro?.id
                 };
 
                 await conn.ExecuteAsync(query, parameters);

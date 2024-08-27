@@ -115,8 +115,7 @@ namespace GetPush_Api.Controllers
         }
 
         private async Task<ClaimsIdentity> GetClaims(AuthenticateUserCommand command)
-        {
-            //var employee = _repository.GetByUsername(command.Email);
+        {            
             var usuarioLogin = await _handler.GetUsuarioLogin(command.email);
             
             if (usuarioLogin == null)
@@ -130,8 +129,6 @@ namespace GetPush_Api.Controllers
                     return await Task.FromResult<ClaimsIdentity>(null);
             }
           
-            var clientManagers = Runtime.ClientManagers.ToLower().Split(',');
-
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, usuarioLogin.login),

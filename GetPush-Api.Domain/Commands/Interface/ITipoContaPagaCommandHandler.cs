@@ -8,6 +8,6 @@ namespace GetPush_Api.Domain.Commands.Interface
         Task<IEnumerable<TipoContaPagaResult>> GetTipoContaPaga();
         Task InsertTipoContaPaga(TipoContaPaga tipoContaPaga);
         Task UpdateTipoContaPaga(TipoContaPaga tipoContaPaga);
-        Task DeleteTipoContaPaga(Guid tipoContaPagaId);        
+        Task<string> DeleteTipoContaPaga(TipoContaPaga tipoContaPaga);        
     }
 }
