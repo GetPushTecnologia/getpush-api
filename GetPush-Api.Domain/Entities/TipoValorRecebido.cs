@@ -18,10 +18,11 @@ namespace GetPush_Api.Domain.Entities
         public DateTime? data_alterado { get; set; }
         public Usuario? usuarioCadastro { get; set; }
 
-        public void AtualizaDataBrasil(Utilidades utils)
+        public void AtualizaDataBrasil(Utilidades utils, Guid usuarioId)
         {
             data_cadastro = utils.RecuperaDataAtualBrasil();
             data_alterado = utils.RecuperaDataAtualBrasil();
+            usuarioCadastro = new Usuario { id = usuarioId };
         }
     }
 }

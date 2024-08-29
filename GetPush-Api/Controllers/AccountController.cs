@@ -141,7 +141,7 @@ namespace GetPush_Api.Controllers
                     new GenericIdentity(usuarioLogin.usuario.nome, "Token"), claims));
         }
 
-        private async Task<IActionResult> Response(object result, List<Notification> notifications)
+        private async Task<IActionResult> Response(object? result, List<Notification> notifications)
         {
             if (notifications == null || notifications.Count == 0)
             {

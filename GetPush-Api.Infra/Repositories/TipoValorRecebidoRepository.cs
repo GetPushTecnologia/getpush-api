@@ -9,7 +9,7 @@ namespace GetPush_Api.Infra.Repositories
 {
     public class TipoValorRecebidoRepository : ITipoValorRecebidoRepository
     {
-        public async Task DeleteTipoValorRecebido(Guid tipoContipoValorRecebidoIdtaPagaId)
+        public async Task DeleteTipoValorRecebido(Guid tipoValorRecebidoId)
         {
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
@@ -17,7 +17,7 @@ namespace GetPush_Api.Infra.Repositories
                                 from TipoValorRecebido 
                                where id = @Id";
 
-                var parameters = new { Id = tipoContipoValorRecebidoIdtaPagaId };
+                var parameters = new { Id = tipoValorRecebidoId };
 
                 await conn.ExecuteAsync(query, parameters);
             }
@@ -93,7 +93,7 @@ namespace GetPush_Api.Infra.Repositories
                     Descricao = tipoValorRecebido.descricao,
                     Data_cadastro = tipoValorRecebido.data_cadastro,
                     Data_alterado = tipoValorRecebido.data_alterado,
-                    Usuario_id_cadastro = tipoValorRecebido.usuarioCadastro.id
+                    Usuario_id_cadastro = tipoValorRecebido.usuarioCadastro?.id
                 };
 
                 await conn.ExecuteAsync(query, parameters);
@@ -105,8 +105,7 @@ namespace GetPush_Api.Infra.Repositories
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
                 var query = @"update TipoValorRecebido 
-                                 set code = @Code,
-                                     descricao = @Descricao,
+                                 set descricao = @Descricao,
                                      data_alterado = @Data_alterado,
                                      usuario_id_cadastro = @Usuario_id_cadastro
                                where id = @Id";
@@ -116,7 +115,7 @@ namespace GetPush_Api.Infra.Repositories
                     Id = tipoValorRecebido.id,
                     Descricao = tipoValorRecebido.descricao,
                     Data_alterado = tipoValorRecebido.data_alterado,
-                    Usuario_id_cadastro = tipoValorRecebido.usuarioCadastro.id
+                    Usuario_id_cadastro = tipoValorRecebido.usuarioCadastro?.id
                 };
 
                 await conn.ExecuteAsync(query, parameters);

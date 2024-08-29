@@ -33,10 +33,10 @@ namespace GetPush_Api.Domain.Commands.Handlers
         }
 
         public async Task<string> DeleteTipoContaPaga(TipoContaPaga tipoContaPaga)
-        {            
+        {
             if (tipoContaPaga != null && tipoContaPaga.usuarioCadastro != null)
             {
-                var tipoContaPagaList = await GetTipoContaPaga();
+                var tipoContaPagaList = await _repository.GetTipoContaPaga();
                 var contaPagaList = await _repositoryContaPaga.GetContaPaga(tipoContaPaga.usuarioCadastro, tipoContaPagaList);
 
                 if (!contaPagaList.Any(x => x.tipoContaPaga.id == tipoContaPaga.id))
@@ -44,8 +44,8 @@ namespace GetPush_Api.Domain.Commands.Handlers
                     await _repository.DeleteTipoContaPaga(tipoContaPaga.id.GetValueOrDefault());
                     return string.Empty;
                 }
-                else
-                    return "Tipo conta não pode ser deletado. Existe Contas pagas cadastradas para ela.";
+
+                return "Tipo conta não pode ser deletado. Existe Contas pagas cadastradas para ele";
             }
 
             return string.Empty;
@@ -54,7 +54,7 @@ namespace GetPush_Api.Domain.Commands.Handlers
         private async Task<int> GetUltimoCode()
         {
             var tipoContaPagaList = await _repository.GetTipoContaPaga();
-            
+
             if (tipoContaPagaList == null)
                 return 0;
 

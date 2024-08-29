@@ -36,7 +36,7 @@ namespace GetPush_Api.Controllers
             {
                 var tipoValorRecebido = await _handler.GetTipoValorRecebido();
 
-                var msg = tipoValorRecebido.Count() > 0 ? "Dados recuperados com sucesso" : "Não retornou dados.";
+                var msg = tipoValorRecebido.Any() ? "Dados recuperados com sucesso" : "Não retornou dados.";
 
                 return ApiResponse(true, msg, tipoValorRecebido);
             }
@@ -54,10 +54,8 @@ namespace GetPush_Api.Controllers
         public async Task<IActionResult> InsertTipoValorRecebido([FromBody] TipoValorRecebido tipoValorRecebido)
         {
             try
-            {
-                var usuarioId = UsuarioId();
-                tipoValorRecebido.usuarioCadastro = new Usuario { id = usuarioId };
-                tipoValorRecebido.AtualizaDataBrasil(new Utilidades());
+            {   
+                tipoValorRecebido.AtualizaDataBrasil(new Utilidades(), UsuarioId());
 
                 await _handler.InsertTipoValorRecebido(tipoValorRecebido);
 
@@ -78,9 +76,7 @@ namespace GetPush_Api.Controllers
         {
             try
             {
-                var usuarioId = UsuarioId();
-                tipoValorRecebido.usuarioCadastro = new Usuario { id = usuarioId };
-                tipoValorRecebido.AtualizaDataBrasil(new Utilidades());
+                tipoValorRecebido.AtualizaDataBrasil(new Utilidades(), UsuarioId());
 
                 await _handler.UpdateTipoContaPaga(tipoValorRecebido);
 
@@ -97,11 +93,18 @@ namespace GetPush_Api.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [SwaggerOperation(Summary = "Tipo Valor Recebido", Description = "Exclusão tipo valor recebido")]
         [Authorize]
-        public async Task<IActionResult> DeleteTipoValorRecebido(Guid tipoContipoValorRecebidoIdtaPagaId)
+        public async Task<IActionResult> DeleteTipoValorRecebido(Guid tipoValorRecebidoId)
         {
             try
             {
-                await _handler.DeleteTipoValorRecebido(tipoContipoValorRecebidoIdtaPagaId);
+                var tipoValorRecebido = new TipoValorRecebido { id = tipoValorRecebidoId };
+
+                tipoValorRecebido.AtualizaDataBrasil(new Utilidades(), UsuarioId());
+
+                var result = await _handler.DeleteTipoValorRecebido(tipoValorRecebido);
+
+                if (!string.IsNullOrEmpty(result))
+                    return ErrorResponse($"Erro: {result}");
 
                 return ApiResponse(true, "Exclusão realizada com sucesso");
             }

@@ -5,7 +5,7 @@ namespace GetPush_Api.Domain.Commands.Interface
 {
     public interface ITipoValorRecebidoCommandHandler
     {
-        Task DeleteTipoValorRecebido(Guid tipoContipoValorRecebidoIdtaPagaId);
+        Task<string> DeleteTipoValorRecebido(TipoValorRecebido tipoValorRecebido);
         Task<IEnumerable<TipoValorRecebidoResult>> GetTipoValorRecebido();
         Task InsertTipoValorRecebido(TipoValorRecebido tipoValorRecebido);
         Task UpdateTipoContaPaga(TipoValorRecebido tipoValorRecebido);
