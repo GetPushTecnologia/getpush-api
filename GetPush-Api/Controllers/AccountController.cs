@@ -110,14 +110,14 @@ namespace GetPush_Api.Controllers
         private async Task<ClaimsIdentity> GetClaims(AuthenticateUserCommand command)
         {
             //var employee = _repository.GetByUsername(command.Email);
-            var usuarioLogin = await _handler.GetUsuarioLogin(command.login);
+            var usuarioLogin = await _handler.GetUsuarioLogin(command.email);
             
             if (usuarioLogin == null)
                 return await Task.FromResult<ClaimsIdentity>(null);
 
             _usuarioResult = usuarioLogin;
 
-            if (!usuarioLogin.Authenticate(command.login, command.password))
+            if (!usuarioLogin.Authenticate(command.email, command.password))
             {
                 if (usuarioLogin.password != command.password)
                     return await Task.FromResult<ClaimsIdentity>(null);
