@@ -1,22 +1,38 @@
-﻿
+﻿using GetPush_Api.Domain.Commands.Interface;
 using GetPush_Api.Domain.Commands.Results;
 using GetPush_Api.Domain.Entities;
 using GetPush_Api.Domain.Repositories;
 
 namespace GetPush_Api.Domain.Commands.Handlers
 {    
-    public class TipoValorRecebidoCommandHandler
+    public class TipoValorRecebidoCommandHandler : ITipoValorRecebidoCommandHandler
     {
         private readonly ITipoValorRecebidoRepository _repository;
+        private readonly IValorRecebidoRepository _repositoryValorRecebido;
 
-        public TipoValorRecebidoCommandHandler(ITipoValorRecebidoRepository repository)
+        public TipoValorRecebidoCommandHandler(ITipoValorRecebidoRepository repository, IValorRecebidoRepository repositoryValorRecebido)
         {
             _repository = repository;
+            _repositoryValorRecebido = repositoryValorRecebido;
         }
 
-        public async Task DeleteTipoValorRecebido(Guid tipoContipoValorRecebidoIdtaPagaId)
+        public async Task<string> DeleteTipoValorRecebido(TipoValorRecebido tipoValorRecebido)
         {
-            await _repository.DeleteTipoValorRecebido(tipoContipoValorRecebidoIdtaPagaId);
+            if (tipoValorRecebido != null && tipoValorRecebido.usuarioCadastro != null)
+            {
+                var tipoValorRecebidoList = await _repository.GetTipoValorRecebido();
+                var valorRecebidoList = await _repositoryValorRecebido.GetValorRecebido(tipoValorRecebido.usuarioCadastro, tipoValorRecebidoList);
+
+                if (!valorRecebidoList.Any(x => x.tipoValorRecebido.id == tipoValorRecebido.id))
+                {
+                    await _repository.DeleteTipoValorRecebido(tipoValorRecebido.id.GetValueOrDefault());
+                    return string.Empty;
+                }
+
+                return "Tipo de valor não pode ser deletado. Existe valores pagos cadastrados para ele.";
+            }
+
+            return string.Empty;
         }
 
         public async Task<IEnumerable<TipoValorRecebidoResult>> GetTipoValorRecebido()
@@ -26,7 +42,7 @@ namespace GetPush_Api.Domain.Commands.Handlers
 
         public async Task InsertTipoValorRecebido(TipoValorRecebido tipoValorRecebido)
         {
-            tipoValorRecebido.code = await GetUltimoCode();
+            tipoValorRecebido.code = await GetUltimoCode() + 1;
             await _repository.InsertTipoValorRecebido(tipoValorRecebido);
         }
 
@@ -38,6 +54,10 @@ namespace GetPush_Api.Domain.Commands.Handlers
         private async Task<int> GetUltimoCode()
         {
             var tipoValorRecebidoList = await _repository.GetTipoValorRecebido();
+
+            if (tipoValorRecebidoList == null)
+                return 0;
+
             return tipoValorRecebidoList.Max(t => t.code);
         }
     }

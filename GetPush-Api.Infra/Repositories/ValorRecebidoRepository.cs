@@ -14,7 +14,7 @@ namespace GetPush_Api.Infra.Repositories
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
                 var query = @"delete 
-                                from valorRecebido 
+                                from ValorRecebido 
                                where id = @Id";
 
                 var parameters = new { Id = valorRecebidoId };
@@ -23,22 +23,22 @@ namespace GetPush_Api.Infra.Repositories
             }
         }
 
-        public async Task<IEnumerable<ValorRecebidoResult>> GetValorRecebido(Usuario usuario)
+        public async Task<IEnumerable<ValorRecebidoResult>> GetValorRecebido(Usuario usuario, IEnumerable<TipoValorRecebidoResult> tipoValorRecebidoList)
         {
             var query = @"select vr.id,
 							     vr.descricao,
 							     vr.tipoValorRecebido_code,
 							     vr.data_recebimento,
-							     vr.valor,
+							     vr.valor_recebido,
 							     vr.usuario_id,
                                  u.nome,
 							     vr.data_cadastro,
 							     vr.data_alterado,
 							     vr.usuario_id_cadastro,
                                  uc.nome as nomeCadastro
-						    from valorRecebido vr
-                      inner join usuario u on u.id = vr.usuario_id
-                      inner join usuario uc on u.id = vr.usuario_id_cadastro
+						    from ValorRecebido vr
+                      inner join Usuario u on u.id = vr.usuario_id
+                      inner join Usuario uc on uc.id = vr.usuario_id_cadastro
                            where usuario_id = @Usuario_id";
 
             using (var conn = new SqlConnection(Runtime.ConnectionString))
@@ -52,13 +52,15 @@ namespace GetPush_Api.Infra.Repositories
                 {
                     foreach (var item in result)
                     {
+                        var tipoValorRecebido = tipoValorRecebidoList.FirstOrDefault(x => x.code == item.tipoValorRecebido_code);
+
                         contasPagarList.Add(new ValorRecebidoResult
                         {
                             id = item.id,
                             descricao = item.descricao,
-                            tipoValorRecebido = new TipoValorRecebidoResult { code = item.tipoValorRecebido_code },
-                            data_recebimento = item.data_pagamento,
-                            valor = item.valor,
+                            tipoValorRecebido = tipoValorRecebido != null ? tipoValorRecebido : new TipoValorRecebidoResult(),
+                            data_recebimento = item.data_recebimento,
+                            valor_recebido = item.valor_recebido,
                             usuario = new UsuarioResult
                             {
                                 id = item.usuario_id,
@@ -86,12 +88,12 @@ namespace GetPush_Api.Infra.Repositories
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
                 var query = @"insert 
-                                into valorRecebido 
+                                into ValorRecebido 
                                     (id,
                                      descricao,
                                      tipoValorRecebido_code,
+                                     valor_recebido,
                                      data_recebimento,
-                                     valor,
                                      usuario_id,
                                      data_cadastro,
                                      data_alterado,
@@ -99,8 +101,8 @@ namespace GetPush_Api.Infra.Repositories
                              values (newid(),
                                      @Descricao,
 	                                 @TipoValorRecebido_code,
+                                     @Valor_recebido,
 	                                 @Data_recebimento,
-	                                 @Valor,
 	                                 @Usuario_id,
 	                                 @Data_cadastro,
 	                                 @Data_alterado,
@@ -111,11 +113,11 @@ namespace GetPush_Api.Infra.Repositories
                     Descricao = valorRecebido.descricao,
                     TipoValorRecebido_code = valorRecebido.tipoValorRecebido.code,
                     Data_recebimento = valorRecebido.data_recebimento,
-                    Valor = valorRecebido.valor,
-                    Usuario_id = valorRecebido.usuario.id,
+                    Valor_recebido = valorRecebido.valor,
+                    Usuario_id = valorRecebido.usuario?.id,
                     Data_cadastro = valorRecebido.data_cadastro,
                     Data_alterado = valorRecebido.data_alterado,
-                    Usuario_id_cadastro = valorRecebido.usuarioCadastro.id
+                    Usuario_id_cadastro = valorRecebido.usuarioCadastro?.id
                 };
 
                 await conn.ExecuteAsync(query, parameters);
@@ -126,11 +128,11 @@ namespace GetPush_Api.Infra.Repositories
         {
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
-                var query = @"update valorRecebido 
+                var query = @"update ValorRecebido 
                                  set descricao = @Descricao,
 	                                 tipoValorRecebido_code = @TipoValorRecebido_code,
 	                                 data_recebimento = @Data_recebimento,
-	                                 valor = @Valor,
+	                                 valor_recebido = @Valor_recebido,
 	                                 data_alterado = @Data_alterado,
 	                                 usuario_id_cadastro = @Usuario_id_cadastro
                                where id = @Id";
@@ -139,11 +141,11 @@ namespace GetPush_Api.Infra.Repositories
                 {
                     Id = valorRecebido.id,
                     Descricao = valorRecebido.descricao,
-                    TipoContasPagar_code = valorRecebido.tipoValorRecebido.code,
-                    Data_pagamento = valorRecebido.data_recebimento,
-                    Valor = valorRecebido.valor,
+                    tipoValorRecebido_code = valorRecebido.tipoValorRecebido.code,
+                    Data_recebimento = valorRecebido.data_recebimento,
+                    Valor_recebido = valorRecebido.valor,
                     Data_alterado = valorRecebido.data_alterado,
-                    Usuario_id_cadastro = valorRecebido.usuarioCadastro.id
+                    Usuario_id_cadastro = valorRecebido.usuarioCadastro?.id
                 };
 
                 await conn.ExecuteAsync(query, parameters);

@@ -1,4 +1,4 @@
-﻿using GetPush_Api.Domain.Commands.Handlers;
+﻿using GetPush_Api.Domain.Commands.Interface;
 using GetPush_Api.Domain.Entities;
 using GetPush_Api.Domain.Util;
 using Microsoft.AspNetCore.Authorization;
@@ -12,9 +12,9 @@ namespace GetPush_Api.Controllers
     [Route("v1")]
     public class ValorRecebidoController : BaseController
     {
-        private readonly ValorRecebidoCommandHandler _handler;
+        private readonly IValorRecebidoCommandHandler _handler;
 
-        public ValorRecebidoController(ValorRecebidoCommandHandler handler)
+        public ValorRecebidoController(IValorRecebidoCommandHandler handler)
         {
             _handler = handler;
         }
@@ -34,11 +34,9 @@ namespace GetPush_Api.Controllers
         {
             try
             {
-                var valorRecebido = await _handler.GetValorRecebido(
-                    new Usuario { id = UsuarioId() }
-                    );
+                var valorRecebido = await _handler.GetValorRecebido(new Usuario { id = UsuarioId() });
 
-                var msg = valorRecebido.Count() > 0 ? "Dados recuperados com sucesso" : "Não retornou dados.";
+                var msg = valorRecebido.Any() ? "Dados recuperados com sucesso" : "Não retornou dados.";
 
                 return ApiResponse(true, msg, valorRecebido);
             }
@@ -57,10 +55,7 @@ namespace GetPush_Api.Controllers
         {
             try
             {
-                var usuarioId = UsuarioId();
-                valorRecebido.usuarioCadastro = new Usuario { id = usuarioId };
-                valorRecebido.usuario = new Usuario { id = usuarioId };
-                valorRecebido.AtualizaDataBrasil(new Utilidades());
+                valorRecebido.AtualizaDataBrasil(new Utilidades(), UsuarioId());
 
                 await _handler.InsertValorRecebido(valorRecebido);
 
@@ -80,10 +75,8 @@ namespace GetPush_Api.Controllers
         public async Task<IActionResult> UpdateValorRecebido([FromBody] ValorRecebido valorRecebido)
         {
             try
-            {
-                var usuarioId = UsuarioId();
-                valorRecebido.usuarioCadastro = new Usuario { id = usuarioId };
-                valorRecebido.AtualizaDataBrasil(new Utilidades());
+            {   
+                valorRecebido.AtualizaDataBrasil(new Utilidades(), UsuarioId());
 
                 await _handler.UpdateValorRecebido(valorRecebido);
 

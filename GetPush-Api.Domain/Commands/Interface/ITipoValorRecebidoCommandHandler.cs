@@ -1,11 +1,11 @@
 ﻿using GetPush_Api.Domain.Commands.Results;
 using GetPush_Api.Domain.Entities;
 
-namespace GetPush_Api.Domain.Repositories
+namespace GetPush_Api.Domain.Commands.Interface
 {
-    public interface ITipoValorRecebidoRepository
+    public interface ITipoValorRecebidoCommandHandler
     {
-        Task DeleteTipoValorRecebido(Guid tipoValorRecebidoId);
+        Task<string> DeleteTipoValorRecebido(TipoValorRecebido tipoValorRecebido);
         Task<IEnumerable<TipoValorRecebidoResult>> GetTipoValorRecebido();
         Task InsertTipoValorRecebido(TipoValorRecebido tipoValorRecebido);
         Task UpdateTipoContaPaga(TipoValorRecebido tipoValorRecebido);

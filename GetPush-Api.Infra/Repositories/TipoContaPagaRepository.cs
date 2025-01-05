@@ -14,7 +14,7 @@ namespace GetPush_Api.Infra.Repositories
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
                 var query = @"delete 
-                                from tipoContasPagas 
+                                from TipoContaPaga 
                                where id = @Id";
 
                 var parameters = new { Id = contasPagasId };
@@ -32,8 +32,8 @@ namespace GetPush_Api.Infra.Repositories
                                  tcp.data_alterado,
                                  tcp.usuario_id_cadastro,
                                  u.nome
-						    from tipoContasPagas tcp
-                           inner join usuario u on u.id = tcp.usuario_id_cadastro";
+						    from TipoContaPaga tcp
+                           inner join Usuario u on u.id = tcp.usuario_id_cadastro";
 
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
@@ -72,7 +72,7 @@ namespace GetPush_Api.Infra.Repositories
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
                 var query = @"insert 
-                                into contasPagas 
+                                into TipoContaPaga 
                                     (id,
                                      code,
                                      descricao,
@@ -92,7 +92,7 @@ namespace GetPush_Api.Infra.Repositories
                     Descricao = tipoContasPagas.descricao,
                     Data_cadastro = tipoContasPagas.data_cadastro,
                     Data_alterado = tipoContasPagas.data_alterado,
-                    Usuario_id_cadastro = tipoContasPagas.usuarioCadastro.id
+                    Usuario_id_cadastro = tipoContasPagas.usuarioCadastro?.id
                 };
 
                 await conn.ExecuteAsync(query, parameters);
@@ -103,9 +103,8 @@ namespace GetPush_Api.Infra.Repositories
         {
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
-                var query = @"update tipoContasPagas 
-                                 set code = @Code,
-                                     descricao = @Descricao,
+                var query = @"update TipoContaPaga 
+                                 set descricao = @Descricao,
                                      data_alterado = @Data_alterado,
                                      usuario_id_cadastro = @Usuario_id_cadastro
                                where id = @Id";
@@ -115,7 +114,7 @@ namespace GetPush_Api.Infra.Repositories
                     Id = tipoContasPagas.id,
                     Descricao = tipoContasPagas.descricao,
                     Data_alterado = tipoContasPagas.data_alterado,
-                    Usuario_id_cadastro = tipoContasPagas.usuarioCadastro.id
+                    Usuario_id_cadastro = tipoContasPagas.usuarioCadastro?.id
                 };
 
                 await conn.ExecuteAsync(query, parameters);

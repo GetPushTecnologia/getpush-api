@@ -7,14 +7,14 @@ using System.Data.SqlClient;
 
 namespace GetPush_Api.Infra.Repositories
 {
-    public class ContasPagasRepository : IContasPagasRepository
+    public class ContaPagaRepository : IContaPagaRepository
     {
-        public async Task DeleteContasPagas(Guid contaPagaId)
+        public async Task DeleteContaPaga(Guid contaPagaId)
         {
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
                 var query = @"delete 
-                                from contasPagas 
+                                from ContaPaga
                                where id = @Id";
 
                 var parameters = new { Id = contaPagaId };
@@ -23,49 +23,54 @@ namespace GetPush_Api.Infra.Repositories
             }
         }
 
-        public async Task<IEnumerable<ContasPagasResult>> GetContasPagas(Usuario usuario)
+        public async Task<IEnumerable<ContaPagaResult>> GetContaPaga(Usuario usuario, IEnumerable<TipoContaPagaResult> tipoContaPagaList)
         {
             var query = @"select cp.id,
 							     cp.descricao,
-							     cp.tipoContasPagar_code,
+							     cp.tipoContaPaga_code,
 							     cp.data_pagamento,
-							     cp.valor,
+							     cp.valor_pago,
 							     cp.usuario_id,
                                  u.nome,
 							     cp.data_cadastro,
 							     cp.data_alterado,
 							     cp.usuario_id_cadastro,
                                  uc.nome as nomeCadastro
-						    from contasPagas cp
-                      inner join usuario u on u.id = cp.usuario_id
-                      inner join usuario uc on u.id = cp.usuario_id_cadastro
-                           where usuario_id = @Usuario_id";
+						    from ContaPaga cp
+                      inner join Usuario u on u.id = cp.usuario_id
+                      inner join Usuario uc on uc.id = cp.usuario_id_cadastro
+                           where usuario_id = @Usuario_id
+                        order by cp.data_cadastro desc";
 
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
                 await conn.OpenAsync();
                 var result = await conn.QueryAsync(query, new { Usuario_id = usuario.id });
 
-                var contasPagarList = new List<ContasPagasResult>();
+                var contasPagarList = new List<ContaPagaResult>();
 
                 if (result != null)
                 {
                     foreach (var item in result)
                     {
-                        contasPagarList.Add(new ContasPagasResult
+                        var tipoContaPaga = tipoContaPagaList.FirstOrDefault(x => x.code == item.tipoContaPaga_code);
+
+                        contasPagarList.Add(new ContaPagaResult
                         {
                             id = item.id,
                             descricao = item.descricao,
-                            tipoContaPaga = new TipoContaPaga { code = item.tipoContasPagar_code },
+                            tipoContaPaga = tipoContaPaga != null ? tipoContaPaga : new TipoContaPagaResult(),
                             data_pagamento = item.data_pagamento,
-                            valor = item.valor,
-                            usuario = new UsuarioResult { 
+                            valor_pago = item.valor_pago,
+                            usuario = new UsuarioResult
+                            {
                                 id = item.usuario_id,
                                 nome = item.nome
                             },
                             data_cadastro = item.data_cadastro,
                             data_alterado = item.data_alterado,
-                            usuarioCadastro = new UsuarioResult { 
+                            usuarioCadastro = new UsuarioResult
+                            {
                                 id = item.usuario_id_cadastro,
                                 nome = item.nomeCadastro
                             }
@@ -75,30 +80,30 @@ namespace GetPush_Api.Infra.Repositories
                     return contasPagarList;
                 }
 
-                return new List<ContasPagasResult>();
+                return new List<ContaPagaResult>();
             }
         }
 
-        public async Task InsertContasPagas(ContasPagas contasPagas)
+        public async Task InsertContaPaga(ContaPaga contasPagas)
         {
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
                 var query = @"insert 
-                                into contasPagas 
+                                into ContaPaga
                                     (id,
 	                                 descricao,
-	                                 tipoContasPagar_code,
+	                                 tipoContaPaga_code,
 	                                 data_pagamento,
-	                                 valor,
+	                                 valor_pago,
 	                                 usuario_id,
 	                                 data_cadastro,
 	                                 data_alterado,
 	                                 usuario_id_cadastro)
                              values (newid(),
                                      @Descricao,
-	                                 @TipoContasPagar_code,
+	                                 @TipoContaPaga_code,
 	                                 @Data_pagamento,
-	                                 @Valor,
+	                                 @Valor_pago,
 	                                 @Usuario_id,
 	                                 @Data_cadastro,
 	                                 @Data_alterado,
@@ -107,28 +112,28 @@ namespace GetPush_Api.Infra.Repositories
                 var parameters = new
                 {
                     Descricao = contasPagas.descricao,
-                    TipoContasPagar_code = contasPagas.tipoContaPaga.code,
+                    tipoContaPaga_code = contasPagas.tipoContaPaga.code,
                     Data_pagamento = contasPagas.data_pagamento,
-                    Valor = contasPagas.valor,
+                    Valor_pago = contasPagas.valor,
                     Usuario_id = contasPagas.usuario.id,
                     Data_cadastro = contasPagas.data_cadastro,
                     Data_alterado = contasPagas.data_alterado,
-                    Usuario_id_cadastro = contasPagas.usuarioCadastro.id
+                    Usuario_id_cadastro = contasPagas.usuarioCadastro?.id
                 };
 
                 await conn.ExecuteAsync(query, parameters);
             }
         }
 
-        public async Task UpdateContasPagas(ContasPagas contasPagas)
+        public async Task UpdateContaPaga(ContaPaga contasPagas)
         {
             using (var conn = new SqlConnection(Runtime.ConnectionString))
             {
-                var query = @"update contasPagas 
+                var query = @"update ContaPaga
                                  set descricao = @Descricao,
-	                                 tipoContasPagar_code = @TipoContasPagar_code,
+	                                 tipoContaPaga_code = @TipoContaPaga_code,
 	                                 data_pagamento = @Data_pagamento,
-	                                 valor = @Valor,
+	                                 valor_pago = @Valor_pago,
 	                                 data_alterado = @Data_alterado,
 	                                 usuario_id_cadastro = @Usuario_id_cadastro
                                where id = @Id";
@@ -137,14 +142,31 @@ namespace GetPush_Api.Infra.Repositories
                 {
                     Id = contasPagas.id,
                     Descricao = contasPagas.descricao,
-                    TipoContasPagar_code = contasPagas.tipoContaPaga.code,
+                    tipoContaPaga_code = contasPagas.tipoContaPaga.code,
                     Data_pagamento = contasPagas.data_pagamento,
-                    Valor = contasPagas.valor,
+                    Valor_pago = contasPagas.valor,
                     Data_alterado = contasPagas.data_alterado,
-                    Usuario_id_cadastro = contasPagas.usuarioCadastro.id
+                    Usuario_id_cadastro = contasPagas.usuarioCadastro?.id
                 };
 
                 await conn.ExecuteAsync(query, parameters);
+            }
+        }
+
+        public async Task<IEnumerable<TotalContaPagaDiaResult>> GetContaPagaTotalDia(Usuario usuario)
+        {
+            var query = @"select convert(varchar(10), data_pagamento, 103) as dataPagamento,
+	                             sum(valor_pago) as totalContaPaga
+                            from ContaPaga
+                           where usuario_id = @Usuario_id
+                           group by convert(varchar(10), data_pagamento, 103)
+                           order by convert(varchar(10), data_pagamento, 103)";
+
+            using(var conn = new SqlConnection(Runtime.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                return await conn.QueryAsync<TotalContaPagaDiaResult>(query, new { Usuario_id = usuario.id });
             }
         }
     }

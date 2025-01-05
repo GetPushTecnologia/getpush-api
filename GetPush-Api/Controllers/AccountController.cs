@@ -6,14 +6,13 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using GetPush_Api.Shared;
 using System.Security.Principal;
-using GetPush_Api.Domain.Commands.Handlers;
 using Microsoft.IdentityModel.Tokens;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
-using System.Security.Cryptography;
 using System.Text;
 using GetPush_Api.Domain.Commands.Results;
+using GetPush_Api.Domain.Commands.Interface;
 
 
 namespace GetPush_Api.Controllers
@@ -21,8 +20,8 @@ namespace GetPush_Api.Controllers
     public class AccountController : ControllerBase
     {
         private UsuarioLoginResult _usuarioResult = new UsuarioLoginResult();
-        private readonly AccountCommandHandler _handler;
-        public AccountController(AccountCommandHandler handler)
+        private readonly IAccountCommandHandler _handler;
+        public AccountController(IAccountCommandHandler handler)
         {
             _handler = handler;
         }
@@ -33,7 +32,7 @@ namespace GetPush_Api.Controllers
         public async Task<IActionResult> SingIn([FromBody] AuthenticateUserCommand command)
         {
             var _tokenOptions = new TokenOptions();
-            
+
             try
             {
                 if (command == null)
@@ -53,7 +52,7 @@ namespace GetPush_Api.Controllers
                 };
 
                 var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Runtime.KeySecurityToken));
-         
+
                 // Configurar as credenciais do token
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -86,6 +85,14 @@ namespace GetPush_Api.Controllers
             }
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("v1/auth/sign-out")]
+        public IActionResult SignOut()
+        {
+            return Ok();
+        }
+
         public class TokenOptions
         {
             public string Jti { get; set; }
@@ -108,8 +115,7 @@ namespace GetPush_Api.Controllers
         }
 
         private async Task<ClaimsIdentity> GetClaims(AuthenticateUserCommand command)
-        {
-            //var employee = _repository.GetByUsername(command.Email);
+        {            
             var usuarioLogin = await _handler.GetUsuarioLogin(command.email);
             
             if (usuarioLogin == null)
@@ -123,8 +129,6 @@ namespace GetPush_Api.Controllers
                     return await Task.FromResult<ClaimsIdentity>(null);
             }
           
-            var clientManagers = Runtime.ClientManagers.ToLower().Split(',');
-
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, usuarioLogin.login),
@@ -137,7 +141,7 @@ namespace GetPush_Api.Controllers
                     new GenericIdentity(usuarioLogin.usuario.nome, "Token"), claims));
         }
 
-        private async Task<IActionResult> Response(object result, List<Notification> notifications)
+        private async Task<IActionResult> Response(object? result, List<Notification> notifications)
         {
             if (notifications == null || notifications.Count == 0)
             {

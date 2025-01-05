@@ -1,13 +1,11 @@
 using GetPush_Api.Domain.Commands.Handlers;
+using GetPush_Api.Domain.Commands.Interface;
 using GetPush_Api.Domain.Commands.Results.map;
 using GetPush_Api.Domain.Repositories;
-using GetPush_Api.Domain.Services;
 using GetPush_Api.Domain.Util;
 using GetPush_Api.Infra.Repositories;
-using GetPush_Api.Infra.Services;
 using GetPush_Api.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-//using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -46,6 +44,17 @@ app.Run();
 // Configuration methods
 void ConfigureServices(IServiceCollection services, IConfiguration configuration, WebApplicationBuilder builder)
 {
+    services.AddCors(options =>
+    {
+        options.AddPolicy("AllowSpecificOrigin",
+            builder =>
+            {
+                builder.WithOrigins("http://localhost:4200", "https://www.getpushtecnologia.com.br")
+                       .AllowAnyHeader()
+                       .AllowAnyMethod();
+            });
+    });
+
     services.AddControllers()
          .AddJsonOptions(options =>
          {
@@ -83,18 +92,21 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     });
 
     // Command Handler
-    services.AddTransient<AccountCommandHandler>();
-    services.AddTransient<ContasPagasCommandHandler>();
-    services.AddTransient<TipoContasPagasCommandHandler>();
-    services.AddTransient<ValorRecebidoCommandHandler>();
-    services.AddTransient<TipoValorRecebidoCommandHandler>();
+    services.AddTransient<IAccountCommandHandler, AccountCommandHandler>();
+    services.AddTransient<IContaPagaCommandHandler, ContaPagaCommandHandler>();
+    services.AddTransient<ITipoContaPagaCommandHandler, TipoContaPagaCommandHandler>();
+    services.AddTransient<IValorRecebidoCommandHandler, ValorRecebidoCommandHandler>();
+    services.AddTransient<ITipoValorRecebidoCommandHandler, TipoValorRecebidoCommandHandler>();
+    services.AddTransient<IGraficoCommanddHandler, GraficoCommanddHandler>();
 
     // Repository
     services.AddTransient<IAccountRepository, AccountRepository>();
-    services.AddTransient<IContasPagasRepository, ContasPagasRepository>();
+    services.AddTransient<IContaPagaRepository, ContaPagaRepository>();
     services.AddTransient<ITipoContaPagaRepository, TipoContaPagaRepository>();
     services.AddTransient<IValorRecebidoRepository, ValorRecebidoRepository>();
     services.AddTransient<ITipoValorRecebidoRepository, TipoValorRecebidoRepository>();
+    services.AddTransient<IGraficoRepository, GraficoRepository>();
+
     // Map
     services.AddTransient<UsuarioMap>();
 
@@ -182,6 +194,7 @@ void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 
     // Use authentication and authorization
     app.UseAuthentication();
+    app.UseCors("AllowSpecificOrigin");
     app.UseAuthorization();
 
     app.Use(async (context, next) =>

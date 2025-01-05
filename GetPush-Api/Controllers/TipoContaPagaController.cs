@@ -1,4 +1,4 @@
-﻿using GetPush_Api.Domain.Commands.Handlers;
+﻿using GetPush_Api.Domain.Commands.Interface;
 using GetPush_Api.Domain.Entities;
 using GetPush_Api.Domain.Util;
 using Microsoft.AspNetCore.Authorization;
@@ -10,11 +10,11 @@ namespace GetPush_Api.Controllers
 {
     [ApiController]
     [Route("v1")]
-    public class TipoContasPagasController : BaseController
+    public class TipoContaPagaController : BaseController
     {
-        private readonly TipoContasPagasCommandHandler _handler;
+        private readonly ITipoContaPagaCommandHandler _handler;
 
-        public TipoContasPagasController(TipoContasPagasCommandHandler handler)
+        public TipoContaPagaController(ITipoContaPagaCommandHandler handler)
         {
             _handler = handler;
         }
@@ -36,7 +36,7 @@ namespace GetPush_Api.Controllers
             {
                 var tipoContasPagas = await _handler.GetTipoContaPaga();
 
-                var msg = tipoContasPagas.Count() > 0 ? "Dados recuperados com sucesso" : "Não retornou dados.";
+                var msg = tipoContasPagas.Any() ? "Dados recuperados com sucesso" : "Não retornou dados.";
 
                 return ApiResponse(true, msg, tipoContasPagas);
             }
@@ -55,9 +55,7 @@ namespace GetPush_Api.Controllers
         {
             try
             {
-                var usuarioId = UsuarioId();
-                tipoContaPaga.usuarioCadastro = new Usuario { id = usuarioId };
-                tipoContaPaga.AtualizaDataBrasil(new Utilidades());
+                tipoContaPaga.AtualizaDataBrasil(new Utilidades(), UsuarioId());
 
                 await _handler.InsertTipoContaPaga(tipoContaPaga);
 
@@ -78,9 +76,7 @@ namespace GetPush_Api.Controllers
         {
             try
             {
-                var usuarioId = UsuarioId();
-                tipoContaPaga.usuarioCadastro = new Usuario { id = usuarioId };
-                tipoContaPaga.AtualizaDataBrasil(new Utilidades());
+                tipoContaPaga.AtualizaDataBrasil(new Utilidades(), UsuarioId());
 
                 await _handler.UpdateTipoContaPaga(tipoContaPaga);
 
@@ -101,7 +97,17 @@ namespace GetPush_Api.Controllers
         {
             try
             {
-                await _handler.DeleteTipoContaPaga(tipoContaPagaId);
+                var tipoContaPaga = new TipoContaPaga
+                {
+                    id = tipoContaPagaId
+                };
+
+                tipoContaPaga.AtualizaDataBrasil(new Utilidades(), UsuarioId());
+
+                var result = await _handler.DeleteTipoContaPaga(tipoContaPaga);
+
+                if (!string.IsNullOrEmpty(result))
+                    return ErrorResponse($"Erro: {result}");
 
                 return ApiResponse(true, "Exclusão realizada com sucesso");
             }
